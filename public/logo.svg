@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 48" fill="none">
+  <!-- Heart icon -->
+  <path d="M20 36 C20 36 8 26 8 18 C8 13.5 11.5 10 16 10 C18.3 10 20.4 11.1 22 12.8 C23.6 11.1 25.7 10 28 10 C32.5 10 36 13.5 36 18 C36 26 24 36 22 38 Z" fill="#f472b6"/>
+  <path d="M20 34 C20 34 9 25 9 18 C9 14 12 11 16 11 C18.1 11 20 12.1 22 14 C24 12.1 25.9 11 28 11 C32 11 35 14 35 18 C35 25 24 34 22 36 Z" fill="#fb7185"/>
+
+  <!-- Wordmark -->
+  <text x="44" y="32" font-family="Nunito, sans-serif" font-weight="800" font-size="22" fill="#1c1917">Julies</text>
+  <text x="108" y="32" font-family="Nunito, sans-serif" font-weight="400" font-size="22" fill="#f472b6">Art</text>
+</svg>
