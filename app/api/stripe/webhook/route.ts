@@ -113,6 +113,19 @@ export async function POST(request: NextRequest) {
 
     // Create order items + personalization values
     for (const item of cartItems) {
+      // Fetch product image from DB if not in metadata
+      let productImage = item.productImage ?? null
+      if (!productImage) {
+        const { data: img } = await supabase
+          .from('product_images')
+          .select('url')
+          .eq('product_id', item.productId)
+          .order('sort_order')
+          .limit(1)
+          .single()
+        productImage = img?.url ?? null
+      }
+
       const { data: orderItem, error: itemError } = await supabase
         .from('order_items')
         .insert({
@@ -120,7 +133,7 @@ export async function POST(request: NextRequest) {
           product_id: item.productId,
           product_name: item.productName,
           product_slug: item.productSlug,
-          product_image: item.productImage,
+          product_image: productImage,
           quantity: item.quantity,
           unit_price: item.unitPrice,
           total_price: item.unitPrice * item.quantity,

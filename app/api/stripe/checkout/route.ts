@@ -82,10 +82,15 @@ export async function POST(request: NextRequest) {
           productId: item.productId,
           productName: item.productName,
           productSlug: item.productSlug,
-          productImage: item.productImage,
           quantity: item.quantity,
           unitPrice: item.unitPrice,
-          personalizations: item.personalizations,
+          personalizations: item.personalizations?.map((p) => ({
+            fieldKey: p.fieldKey,
+            fieldLabel: p.fieldLabel,
+            fieldType: p.fieldType,
+            value: p.value,
+            displayValue: p.displayValue,
+          })),
         }))),
       },
     })
