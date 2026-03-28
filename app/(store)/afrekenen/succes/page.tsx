@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
@@ -12,6 +12,21 @@ import { formatPrice, formatDate } from '@/lib/utils'
 import { Order } from '@/types'
 
 export default function BetalingSucesPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-[60vh] flex items-center justify-center">
+        <div className="text-center">
+          <Spinner size="lg" className="mx-auto mb-4" />
+          <p className="text-neutral-500">Je bestelling wordt bevestigd…</p>
+        </div>
+      </div>
+    }>
+      <BetalingSucesContent />
+    </Suspense>
+  )
+}
+
+function BetalingSucesContent() {
   const searchParams = useSearchParams()
   const sessionId = searchParams.get('session_id')
   const [order, setOrder] = useState<Order | null>(null)
