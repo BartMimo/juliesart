@@ -40,18 +40,28 @@ function BetalingSucesContent() {
         return
       }
 
-      try {
-        const res = await fetch(`/api/stripe/checkout?session_id=${sessionId}`)
-        if (res.ok) {
-          const data = await res.json()
-          setOrder(data.order)
-          clearCart()
+      // Retry up to 8 times with 1.5s delay to wait for webhook
+      for (let attempt = 0; attempt < 8; attempt++) {
+        try {
+          const res = await fetch(`/api/stripe/checkout?session_id=${sessionId}`)
+          if (res.ok) {
+            const data = await res.json()
+            if (data.order) {
+              setOrder(data.order)
+              clearCart()
+              setLoading(false)
+              return
+            }
+          }
+        } catch {
+          // ignore, keep retrying
         }
-      } catch {
-        // Order may not be created yet — webhook can be slightly delayed
-      } finally {
-        setLoading(false)
+        await new Promise((r) => setTimeout(r, 1500))
       }
+
+      // Give up after retries — still show success without order details
+      clearCart()
+      setLoading(false)
     }
 
     fetchOrder()
