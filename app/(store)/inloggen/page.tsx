@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
@@ -20,6 +20,14 @@ const loginSchema = z.object({
 type LoginFormData = z.infer<typeof loginSchema>
 
 export default function InloggenPage() {
+  return (
+    <Suspense>
+      <InloggenContent />
+    </Suspense>
+  )
+}
+
+function InloggenContent() {
   const searchParams = useSearchParams()
   const nextUrl = searchParams.get('next') ?? '/account'
   const [loading, setLoading] = useState(false)
