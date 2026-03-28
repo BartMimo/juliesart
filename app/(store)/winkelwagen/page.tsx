@@ -163,7 +163,7 @@ export default function WinkelwagenPage() {
               </Button>
 
               {/* Payment icons */}
-              <div className="flex items-center justify-center gap-2 text-xs text-neutral-400">
+              <div className="flex flex-wrap items-center justify-center gap-1 text-xs text-neutral-400 text-center">
                 <span>🔒 Veilig betalen via</span>
                 <span className="font-semibold text-neutral-500">iDEAL · Mastercard · Visa · Bancontact</span>
               </div>

@@ -23,8 +23,8 @@ export function RevenueChart({ data }: RevenueChartProps) {
       <AreaChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
         <defs>
           <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#ec4899" stopOpacity={0.2} />
-            <stop offset="95%" stopColor="#ec4899" stopOpacity={0} />
+            <stop offset="5%" stopColor="#a87048" stopOpacity={0.2} />
+            <stop offset="95%" stopColor="#a87048" stopOpacity={0} />
           </linearGradient>
         </defs>
         <CartesianGrid strokeDasharray="3 3" stroke="#f5f5f5" />
@@ -48,7 +48,7 @@ export function RevenueChart({ data }: RevenueChartProps) {
           ]}
           contentStyle={{
             borderRadius: '12px',
-            border: '1px solid #fbcfe8',
+            border: '1px solid #e4d0b8',
             boxShadow: '0 4px 24px rgba(0,0,0,0.06)',
             fontSize: '13px',
           }}
@@ -56,7 +56,7 @@ export function RevenueChart({ data }: RevenueChartProps) {
         <Area
           type="monotone"
           dataKey="revenue"
-          stroke="#ec4899"
+          stroke="#a87048"
           strokeWidth={2}
           fill="url(#colorRevenue)"
         />
@@ -83,9 +83,9 @@ export function TopProductsChart({ data }: TopProductsChartProps) {
         <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: '#737373' }} axisLine={false} tickLine={false} width={130} />
         <Tooltip
           formatter={(v: number) => [v, 'Verkocht']}
-          contentStyle={{ borderRadius: '12px', border: '1px solid #fbcfe8', fontSize: '13px' }}
+          contentStyle={{ borderRadius: '12px', border: '1px solid #e4d0b8', fontSize: '13px' }}
         />
-        <Bar dataKey="verkocht" fill="#ec4899" radius={[0, 6, 6, 0]} />
+        <Bar dataKey="verkocht" fill="#a87048" radius={[0, 6, 6, 0]} />
       </BarChart>
     </ResponsiveContainer>
   )

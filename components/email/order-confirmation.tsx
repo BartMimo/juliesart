@@ -35,17 +35,17 @@ export function OrderConfirmationEmail({ order }: OrderConfirmationEmailProps) {
         <Body className="bg-[#fdf8f2] font-sans">
           <Container className="max-w-[600px] mx-auto">
             {/* Header */}
-            <Section className="bg-[#ec4899] rounded-t-2xl px-8 py-10 text-center">
+            <Section className="bg-[#a87048] rounded-t-2xl px-8 py-10 text-center">
               <Heading className="text-white text-3xl font-black m-0">
                 Julies Art 🌸
               </Heading>
-              <Text className="text-pink-100 text-sm mt-2 m-0">
+              <Text className="text-[#f2e8d9] text-sm mt-2 m-0">
                 Gepersonaliseerde kindercadeaus met liefde gemaakt
               </Text>
             </Section>
 
             {/* Main card */}
-            <Section className="bg-white px-8 py-10 rounded-b-2xl border border-[#fbcfe8]">
+            <Section className="bg-white px-8 py-10 rounded-b-2xl border border-[#e4d0b8]">
               {/* Greeting */}
               <Heading as="h1" className="text-[#262626] text-2xl font-bold m-0 mb-3">
                 Bedankt voor je bestelling! 🎀
@@ -57,10 +57,10 @@ export function OrderConfirmationEmail({ order }: OrderConfirmationEmailProps) {
               </Text>
 
               {/* Order info box */}
-              <Section className="bg-[#fdf2f8] border border-[#fbcfe8] rounded-2xl px-6 py-5 mb-6">
+              <Section className="bg-[#faf6f0] border border-[#e4d0b8] rounded-2xl px-6 py-5 mb-6">
                 <Row>
                   <Column>
-                    <Text className="text-xs font-bold text-[#ec4899] uppercase tracking-wide m-0 mb-1">
+                    <Text className="text-xs font-bold text-[#a87048] uppercase tracking-wide m-0 mb-1">
                       Bestelnummer
                     </Text>
                     <Text className="text-[#262626] font-bold text-base m-0">
@@ -68,7 +68,7 @@ export function OrderConfirmationEmail({ order }: OrderConfirmationEmailProps) {
                     </Text>
                   </Column>
                   <Column>
-                    <Text className="text-xs font-bold text-[#ec4899] uppercase tracking-wide m-0 mb-1">
+                    <Text className="text-xs font-bold text-[#a87048] uppercase tracking-wide m-0 mb-1">
                       Datum
                     </Text>
                     <Text className="text-[#262626] font-bold text-base m-0">
@@ -76,7 +76,7 @@ export function OrderConfirmationEmail({ order }: OrderConfirmationEmailProps) {
                     </Text>
                   </Column>
                   <Column>
-                    <Text className="text-xs font-bold text-[#ec4899] uppercase tracking-wide m-0 mb-1">
+                    <Text className="text-xs font-bold text-[#a87048] uppercase tracking-wide m-0 mb-1">
                       Totaal
                     </Text>
                     <Text className="text-[#262626] font-bold text-base m-0">
@@ -148,7 +148,7 @@ export function OrderConfirmationEmail({ order }: OrderConfirmationEmailProps) {
                 <Row>
                   <Column><Text className="text-[#262626] font-bold text-base m-0">Totaal betaald</Text></Column>
                   <Column className="text-right">
-                    <Text className="text-[#ec4899] font-black text-xl m-0">{formatPrice(order.total)}</Text>
+                    <Text className="text-[#a87048] font-black text-xl m-0">{formatPrice(order.total)}</Text>
                   </Column>
                 </Row>
               </Section>
@@ -170,8 +170,8 @@ export function OrderConfirmationEmail({ order }: OrderConfirmationEmailProps) {
               )}
 
               {/* Message */}
-              <Section className="bg-[#fdf2f8] border border-[#fbcfe8] rounded-2xl px-6 py-5 mb-6">
-                <Text className="text-[#be185d] font-semibold text-sm m-0 mb-2">
+              <Section className="bg-[#faf6f0] border border-[#e4d0b8] rounded-2xl px-6 py-5 mb-6">
+                <Text className="text-[#6b3e25] font-semibold text-sm m-0 mb-2">
                   ✨ Wat kun je verwachten?
                 </Text>
                 <Text className="text-[#737373] text-sm leading-relaxed m-0">
@@ -185,7 +185,7 @@ export function OrderConfirmationEmail({ order }: OrderConfirmationEmailProps) {
               <Section className="text-center mb-6">
                 <Link
                   href={`${SITE_URL}/account/bestellingen/${order.id}`}
-                  className="bg-[#ec4899] text-white font-bold text-base px-8 py-4 rounded-full no-underline inline-block"
+                  className="bg-[#a87048] text-white font-bold text-base px-8 py-4 rounded-full no-underline inline-block"
                 >
                   Bekijk je bestelling →
                 </Link>
@@ -194,7 +194,7 @@ export function OrderConfirmationEmail({ order }: OrderConfirmationEmailProps) {
               {/* Footer message */}
               <Text className="text-[#a3a3a3] text-xs text-center leading-relaxed m-0">
                 Heb je vragen? Stuur een e-mail naar{' '}
-                <Link href="mailto:info@juliesart.nl" className="text-[#ec4899]">
+                <Link href="mailto:info@juliesart.nl" className="text-[#a87048]">
                   info@juliesart.nl
                 </Link>
                 . We helpen je graag!

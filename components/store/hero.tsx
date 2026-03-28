@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 
 export function Hero() {
   return (
-    <section className="relative min-h-[90vh] flex items-center overflow-hidden bg-hero-gradient">
+    <section className="relative min-h-[70vh] sm:min-h-[90vh] flex items-center overflow-hidden bg-hero-gradient">
       {/* Decorative blobs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-20 -right-20 w-96 h-96 bg-brand-200/30 rounded-full blur-3xl" />
@@ -15,14 +15,14 @@ export function Hero() {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-lavender-100/20 rounded-full blur-3xl" />
       </div>
 
-      <div className="container-brand relative z-10 py-24">
+      <div className="container-brand relative z-10 py-12 sm:py-24">
         <div className="max-w-3xl mx-auto text-center">
           {/* Badge */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 bg-white border border-brand-200 text-brand-700 text-sm font-semibold px-4 py-2 rounded-full shadow-soft mb-8"
+            className="inline-flex items-center gap-2 bg-white border border-brand-200 text-brand-700 text-sm font-semibold px-4 py-2 rounded-full shadow-soft mb-4 sm:mb-8"
           >
             <Sparkles className="h-4 w-4 text-brand-500" />
             Elk cadeau uniek, elk kindje bijzonder
@@ -33,7 +33,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="heading-display text-5xl sm:text-6xl lg:text-7xl text-neutral-800 mb-6"
+            className="heading-display text-3xl sm:text-5xl md:text-6xl lg:text-7xl text-neutral-800 mb-4 sm:mb-6"
           >
             Gepersonaliseerde{' '}
             <span className="text-gradient-brand">kindercadeaus</span>{' '}
@@ -45,7 +45,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-xl text-neutral-500 mb-10 max-w-2xl mx-auto leading-relaxed"
+            className="text-base sm:text-xl text-neutral-500 mb-6 sm:mb-10 max-w-2xl mx-auto leading-relaxed"
           >
             Van tandendoosjes tot houten koffertjes — elk stuk wordt met zorg gemaakt en voorzien
             van de naam van jouw kleintje. Een cadeau dat een leven lang bijblijft.
@@ -76,7 +76,7 @@ export function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6, delay: 0.5 }}
-            className="flex flex-wrap items-center justify-center gap-6 mt-12 text-sm text-neutral-500"
+            className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mt-8 sm:mt-12 text-sm text-neutral-500"
           >
             {[
               '✨ Handgemaakt',

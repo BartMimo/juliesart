@@ -9,43 +9,43 @@
      Brand Colors — Warm Pastel Palette
      ---------------------------------------- */
 
-  /* Primary: Warm Rose/Pink */
-  --color-brand-50: #fdf2f8;
-  --color-brand-100: #fce7f3;
-  --color-brand-200: #fbcfe8;
-  --color-brand-300: #f9a8d4;
-  --color-brand-400: #f472b6;
-  --color-brand-500: #ec4899;
-  --color-brand-600: #db2777;
-  --color-brand-700: #be185d;
-  --color-brand-800: #9d174d;
-  --color-brand-900: #831843;
+  /* Primary: Warm Mocha/Taupe */
+  --color-brand-50: #faf6f0;
+  --color-brand-100: #f2e8d9;
+  --color-brand-200: #e4d0b8;
+  --color-brand-300: #d4b494;
+  --color-brand-400: #c09268;
+  --color-brand-500: #a87048;
+  --color-brand-600: #8a5635;
+  --color-brand-700: #6b3e25;
+  --color-brand-800: #4d2b18;
+  --color-brand-900: #31190d;
 
-  /* Accent: Warm Peach */
-  --color-peach-50: #fff8f3;
-  --color-peach-100: #fff1e6;
-  --color-peach-200: #ffd8b8;
-  --color-peach-300: #ffbe85;
-  --color-peach-400: #ffa052;
-  --color-peach-500: #f97316;
+  /* Accent: Warm Gold/Amber */
+  --color-peach-50: #fdf8ef;
+  --color-peach-100: #f8edcf;
+  --color-peach-200: #f0d8a0;
+  --color-peach-300: #e5c06a;
+  --color-peach-400: #d4a43c;
+  --color-peach-500: #b88420;
 
-  /* Soft Lavender */
-  --color-lavender-50: #f5f3ff;
-  --color-lavender-100: #ede9fe;
-  --color-lavender-200: #ddd6fe;
-  --color-lavender-300: #c4b5fd;
-  --color-lavender-400: #a78bfa;
-  --color-lavender-500: #8b5cf6;
+  /* Soft Sage */
+  --color-lavender-50: #f4f5f0;
+  --color-lavender-100: #e5e8da;
+  --color-lavender-200: #cdd3bb;
+  --color-lavender-300: #b0bc98;
+  --color-lavender-400: #8d9b72;
+  --color-lavender-500: #6e7c52;
 
-  /* Soft Mint */
-  --color-mint-50: #f0fdf9;
-  --color-mint-100: #ccfbf1;
-  --color-mint-200: #99f6e4;
-  --color-mint-300: #5eead4;
+  /* Warm Sage */
+  --color-mint-50: #f5f8f0;
+  --color-mint-100: #e5eddb;
+  --color-mint-200: #c9dbb6;
+  --color-mint-300: #a8c48e;
 
   /* Warm Cream / Background */
-  --color-cream: #fdf8f2;
-  --color-cream-dark: #f7ede0;
+  --color-cream: #faf5ee;
+  --color-cream-dark: #f2e8d5;
 
   /* Neutral / Text */
   --color-neutral-50: #fafafa;
@@ -97,9 +97,9 @@
   /* ----------------------------------------
      Shadows (soft, warm)
      ---------------------------------------- */
-  --shadow-soft: 0 2px 12px 0 rgba(236, 72, 153, 0.08);
+  --shadow-soft: 0 2px 12px 0 rgba(168, 112, 72, 0.10);
   --shadow-card: 0 4px 24px 0 rgba(0, 0, 0, 0.06);
-  --shadow-hover: 0 8px 32px 0 rgba(236, 72, 153, 0.14);
+  --shadow-hover: 0 8px 32px 0 rgba(168, 112, 72, 0.18);
   --shadow-lg: 0 12px 48px 0 rgba(0, 0, 0, 0.1);
 
   /* ----------------------------------------
@@ -139,6 +139,7 @@ html {
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
 }
 
 body {

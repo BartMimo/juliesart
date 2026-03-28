@@ -148,23 +148,23 @@ export default function ProductPage() {
     <div className="py-10">
       <div className="container-brand">
         {/* Breadcrumb */}
-        <nav className="text-sm text-neutral-400 mb-8 flex items-center gap-2">
-          <a href="/" className="hover:text-brand-500 transition-colors">Home</a>
-          <span>/</span>
-          <a href="/winkel" className="hover:text-brand-500 transition-colors">Winkel</a>
+        <nav className="text-sm text-neutral-400 mb-8 flex items-center gap-2 overflow-hidden">
+          <a href="/" className="hover:text-brand-500 transition-colors shrink-0">Home</a>
+          <span className="shrink-0">/</span>
+          <a href="/winkel" className="hover:text-brand-500 transition-colors shrink-0">Winkel</a>
           {product.category && (
             <>
-              <span>/</span>
-              <a href={`/winkel/${product.category.slug}`} className="hover:text-brand-500 transition-colors">
+              <span className="shrink-0">/</span>
+              <a href={`/winkel/${product.category.slug}`} className="hover:text-brand-500 transition-colors shrink-0">
                 {product.category.name}
               </a>
             </>
           )}
-          <span>/</span>
-          <span className="text-neutral-600 font-medium">{product.name}</span>
+          <span className="shrink-0">/</span>
+          <span className="text-neutral-600 font-medium truncate">{product.name}</span>
         </nav>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 xl:gap-16">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 xl:gap-16">
           {/* Images */}
           <SectionReveal direction="left">
             <ProductImages
