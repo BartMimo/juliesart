@@ -41,10 +41,6 @@ export const metadata: Metadata = {
     title: `${SITE_NAME} — Gepersonaliseerde Kindercadeaus`,
     description: SITE_DESCRIPTION,
   },
-  icons: {
-    icon: '/logo2.png',
-    apple: '/logo2.png',
-  },
   robots: {
     index: true,
     follow: true,
