@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { motion } from 'framer-motion'
-import { Mail, Phone, Clock, Send } from 'lucide-react'
+import { Mail, Clock, Send } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
@@ -60,7 +60,6 @@ export default function ContactPage() {
             <div className="space-y-6">
               {[
                 { icon: Mail, title: 'E-mail', value: 'info@juliesart.nl', href: 'mailto:info@juliesart.nl' },
-                { icon: Phone, title: 'Telefoon', value: '+31 6 00 00 00 00', href: 'tel:+31600000000' },
                 { icon: Clock, title: 'Bereikbaarheid', value: 'Ma–Vr, 9:00–17:00', href: null },
               ].map(({ icon: Icon, title, value, href }) => (
                 <div key={title} className="flex items-start gap-4">

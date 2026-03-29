@@ -32,15 +32,15 @@ export function Footer() {
               <Image
                 src="/logo2.png"
                 alt="Julies Art logo"
-                width={40}
-                height={40}
+                width={36}
+                height={36}
                 className="object-contain"
               />
               <Image
                 src="/naam.png"
                 alt="Julies Art"
-                width={100}
-                height={30}
+                width={115}
+                height={35}
                 className="object-contain"
               />
             </div>
