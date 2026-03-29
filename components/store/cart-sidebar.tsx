@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
+import Image from 'next/image'
 import Link from 'next/link'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ShoppingBag, ArrowRight, Truck } from 'lucide-react'
@@ -116,7 +117,7 @@ export function CartSidebar({ open, onClose }: CartSidebarProps) {
                     animate={{ opacity: 1 }}
                     className="flex flex-col items-center justify-center h-full text-center py-16"
                   >
-                    <div className="text-6xl mb-4">🛍️</div>
+                    <Image src="/winkelwagen.png" alt="Lege winkelwagen" width={120} height={120} className="mb-4" />
                     <p className="font-semibold text-neutral-700 text-lg mb-2">
                       Je winkelwagen is leeg
                     </p>
