@@ -29,17 +29,33 @@ export function OrderConfirmationEmail({ order }: OrderConfirmationEmailProps) {
     <Html lang="nl">
       <Head />
       <Preview>
-        Bedankt voor je bestelling {order.order_number}! We gaan er meteen mee aan de slag. 🌸
+        Bedankt voor je bestelling {order.order_number}! We gaan er meteen mee aan de slag.
       </Preview>
       <Tailwind>
         <Body className="bg-[#fdf8f2] font-sans">
           <Container className="max-w-[600px] mx-auto">
             {/* Header */}
-            <Section className="bg-[#a87048] rounded-t-2xl px-8 py-10 text-center">
-              <Heading className="text-white text-3xl font-black m-0">
-                Julies Art 🌸
-              </Heading>
-              <Text className="text-[#f2e8d9] text-sm mt-2 m-0">
+            <Section className="bg-[#fdf0e0] rounded-t-2xl px-8 py-8 text-center">
+              <Row>
+                <Column className="text-right pr-2">
+                  <Img
+                    src={`${SITE_URL}/logo2.png`}
+                    width="80"
+                    height="80"
+                    alt="Julies Art logo"
+                    style={{ display: 'inline-block' }}
+                  />
+                </Column>
+                <Column className="text-left pl-2" style={{ verticalAlign: 'middle' }}>
+                  <Img
+                    src={`${SITE_URL}/naam.png`}
+                    width="180"
+                    alt="Julies Art"
+                    style={{ display: 'inline-block' }}
+                  />
+                </Column>
+              </Row>
+              <Text className="text-[#a87048] text-sm mt-3 m-0 font-medium">
                 Gepersonaliseerde kindercadeaus met liefde gemaakt
               </Text>
             </Section>
@@ -48,7 +64,7 @@ export function OrderConfirmationEmail({ order }: OrderConfirmationEmailProps) {
             <Section className="bg-white px-8 py-10 rounded-b-2xl border border-[#e4d0b8]">
               {/* Greeting */}
               <Heading as="h1" className="text-[#262626] text-2xl font-bold m-0 mb-3">
-                Bedankt voor je bestelling! 🎀
+                Bedankt voor je bestelling!
               </Heading>
               <Text className="text-[#737373] text-base leading-relaxed m-0 mb-6">
                 Lieve {order.customer_name ?? order.email.split('@')[0]}, je bestelling is in goede orde ontvangen en
@@ -172,7 +188,7 @@ export function OrderConfirmationEmail({ order }: OrderConfirmationEmailProps) {
               {/* Message */}
               <Section className="bg-[#faf6f0] border border-[#e4d0b8] rounded-2xl px-6 py-5 mb-6">
                 <Text className="text-[#6b3e25] font-semibold text-sm m-0 mb-2">
-                  ✨ Wat kun je verwachten?
+                  Wat kun je verwachten?
                 </Text>
                 <Text className="text-[#737373] text-sm leading-relaxed m-0">
                   We verwerken je bestelling zo snel mogelijk. Gepersonaliseerde producten worden

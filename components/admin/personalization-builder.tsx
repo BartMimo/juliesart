@@ -49,14 +49,10 @@ export function PersonalizationBuilder({ productId, fields, onFieldsChange }: Pe
   }
 
   const updateField = async (fieldId: string, updates: Partial<PersonalizationField>) => {
-    const { error } = await supabase
-      .from('personalization_fields')
-      .update(updates)
-      .eq('id', fieldId)
-
-    if (!error) {
-      onFieldsChange(fields.map((f) => (f.id === fieldId ? { ...f, ...updates } : f)))
-    }
+    // Optimistic update first so UI is instant
+    onFieldsChange(fields.map((f) => (f.id === fieldId ? { ...f, ...updates } : f)))
+    // Fire DB write without awaiting
+    supabase.from('personalization_fields').update(updates).eq('id', fieldId)
   }
 
   const deleteField = async (fieldId: string) => {
@@ -94,8 +90,7 @@ export function PersonalizationBuilder({ productId, fields, onFieldsChange }: Pe
   }
 
   const updateOption = async (fieldId: string, optionId: string, updates: Partial<PersonalizationOption>) => {
-    await supabase.from('personalization_options').update(updates).eq('id', optionId)
-
+    // Optimistic update first so UI is instant
     onFieldsChange(
       fields.map((f) =>
         f.id === fieldId
@@ -103,6 +98,8 @@ export function PersonalizationBuilder({ productId, fields, onFieldsChange }: Pe
           : f
       )
     )
+    // Fire DB write without awaiting
+    supabase.from('personalization_options').update(updates).eq('id', optionId)
   }
 
   const deleteOption = async (fieldId: string, optionId: string) => {
@@ -172,6 +169,13 @@ function FieldCard({ field, expanded, onToggle, onUpdate, onDelete, onAddOption,
   const hasOptions = OPTION_TYPES.includes(field.type)
   const options = (field.options ?? []).sort((a, b) => a.sort_order - b.sort_order)
 
+  // Local state for text inputs to prevent reset-on-keystroke
+  const [localLabel, setLocalLabel] = useState(field.label)
+  const [localKey, setLocalKey] = useState(field.key)
+  const [localPlaceholder, setLocalPlaceholder] = useState(field.placeholder ?? '')
+  const [localMaxLength, setLocalMaxLength] = useState(field.max_length?.toString() ?? '')
+  const [localHelpText, setLocalHelpText] = useState(field.help_text ?? '')
+
   return (
     <div className={cn('border rounded-2xl bg-white overflow-hidden transition-all', expanded ? 'border-brand-300 shadow-soft' : 'border-neutral-200')}>
       {/* Field header */}
@@ -196,12 +200,14 @@ function FieldCard({ field, expanded, onToggle, onUpdate, onDelete, onAddOption,
 
         <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={onDelete}
             className="p-1.5 rounded-full hover:bg-red-50 text-neutral-400 hover:text-red-500 transition-colors"
           >
             <Trash2 className="h-3.5 w-3.5" />
           </button>
           <button
+            type="button"
             onClick={onToggle}
             className="p-1.5 rounded-full hover:bg-neutral-100 text-neutral-400 transition-colors"
           >
@@ -230,38 +236,43 @@ function FieldCard({ field, expanded, onToggle, onUpdate, onDelete, onAddOption,
 
             <Input
               label="Interne sleutel (key)"
-              value={field.key}
-              onChange={(e) => onUpdate({ key: e.target.value.toLowerCase().replace(/\s+/g, '_') })}
+              value={localKey}
+              onChange={(e) => setLocalKey(e.target.value.toLowerCase().replace(/\s+/g, '_'))}
+              onBlur={() => onUpdate({ key: localKey })}
               helpText="Unieke interne naam"
             />
           </div>
 
           <Input
             label="Label (weergavenaam)"
-            value={field.label}
-            onChange={(e) => onUpdate({ label: e.target.value })}
+            value={localLabel}
+            onChange={(e) => setLocalLabel(e.target.value)}
+            onBlur={() => onUpdate({ label: localLabel })}
           />
 
           {field.type === 'text' && (
             <div className="grid grid-cols-2 gap-3">
               <Input
                 label="Placeholder"
-                value={field.placeholder ?? ''}
-                onChange={(e) => onUpdate({ placeholder: e.target.value })}
+                value={localPlaceholder}
+                onChange={(e) => setLocalPlaceholder(e.target.value)}
+                onBlur={() => onUpdate({ placeholder: localPlaceholder })}
               />
               <Input
                 label="Max. tekens"
                 type="number"
-                value={field.max_length ?? ''}
-                onChange={(e) => onUpdate({ max_length: e.target.value ? parseInt(e.target.value) : null })}
+                value={localMaxLength}
+                onChange={(e) => setLocalMaxLength(e.target.value)}
+                onBlur={() => onUpdate({ max_length: localMaxLength ? parseInt(localMaxLength) : null })}
               />
             </div>
           )}
 
           <Input
             label="Helptekst (optioneel)"
-            value={field.help_text ?? ''}
-            onChange={(e) => onUpdate({ help_text: e.target.value })}
+            value={localHelpText}
+            onChange={(e) => setLocalHelpText(e.target.value)}
+            onBlur={() => onUpdate({ help_text: localHelpText })}
             helpText="Wordt als toelichting getoond bij het veld"
           />
 
@@ -331,6 +342,11 @@ function OptionRow({
   onUpdate: (updates: Partial<PersonalizationOption>) => void
   onDelete: () => void
 }) {
+  // Local state for text inputs to prevent reset-on-keystroke
+  const [localLabel, setLocalLabel] = useState(option.label)
+  const [localValue, setLocalValue] = useState(option.value)
+  const [localFontPreview, setLocalFontPreview] = useState(option.font_preview ?? '')
+
   return (
     <div className="flex items-center gap-2 bg-white border border-neutral-200 rounded-xl px-3 py-2.5">
       {/* Color preview */}
@@ -346,22 +362,25 @@ function OptionRow({
 
       <input
         className="flex-1 min-w-0 text-sm text-neutral-700 border-0 bg-transparent focus:outline-none"
-        value={option.label}
-        onChange={(e) => onUpdate({ label: e.target.value })}
+        value={localLabel}
+        onChange={(e) => setLocalLabel(e.target.value)}
+        onBlur={() => onUpdate({ label: localLabel })}
         placeholder="Label"
       />
       <input
         className="w-28 text-xs text-neutral-500 border-0 bg-neutral-50 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-brand-400"
-        value={option.value}
-        onChange={(e) => onUpdate({ value: e.target.value })}
+        value={localValue}
+        onChange={(e) => setLocalValue(e.target.value)}
+        onBlur={() => onUpdate({ value: localValue })}
         placeholder="waarde"
       />
 
       {fieldType === 'font' && (
         <input
           className="w-28 text-xs text-neutral-500 border-0 bg-neutral-50 rounded-lg px-2 py-1 focus:outline-none focus:ring-1 focus:ring-brand-400"
-          value={option.font_preview ?? ''}
-          onChange={(e) => onUpdate({ font_preview: e.target.value })}
+          value={localFontPreview}
+          onChange={(e) => setLocalFontPreview(e.target.value)}
+          onBlur={() => onUpdate({ font_preview: localFontPreview })}
           placeholder="Font naam"
         />
       )}
@@ -385,6 +404,7 @@ function OptionRow({
       </label>
 
       <button
+        type="button"
         onClick={onDelete}
         className="p-1 rounded-full hover:bg-red-50 text-neutral-300 hover:text-red-500 transition-colors shrink-0"
       >
