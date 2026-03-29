@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import { Hero } from '@/components/store/hero'
 import { FeaturedProducts } from '@/components/store/featured-products'
+import { TrustBadges } from '@/components/store/trust-badges'
 import { SectionReveal } from '@/components/store/section-reveal'
 import { SITE_NAME, SITE_DESCRIPTION } from '@/lib/constants'
 
@@ -14,6 +15,7 @@ export default function HomePage() {
     <>
       <Hero />
 <FeaturedProducts />
+      <TrustBadges />
       {/* USP section */}
       <SectionReveal>
         <section className="py-20 bg-white">

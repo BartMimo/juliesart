@@ -71,22 +71,6 @@ export function Hero() {
             </Button>
           </motion.div>
 
-          {/* Trust indicators */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mt-8 sm:mt-12 text-sm text-neutral-500"
-          >
-            {[
-              '✨ Handgemaakt',
-              '🚀 Snel verzonden',
-              '💝 Uniek cadeau',
-              '🔒 Veilig betalen',
-            ].map((item) => (
-              <span key={item} className="font-medium">{item}</span>
-            ))}
-          </motion.div>
         </div>
       </div>
 
