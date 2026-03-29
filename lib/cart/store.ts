@@ -10,19 +10,14 @@ interface CartState {
   discountCode: string | null
   discountType: DiscountType | null
   discountValue: number | null
-
-  // Computed
-  itemCount: number
-  subtotal: number
   discountAmount: number
-  total: number
 
   // Actions
   addItem: (item: Omit<CartItem, 'id'>) => void
   removeItem: (id: string) => void
   updateQuantity: (id: string, quantity: number) => void
   clearCart: () => void
-  applyDiscount: (code: string, type: DiscountType, value: number) => void
+  applyDiscount: (code: string, type: DiscountType, value: number | string) => void
   removeDiscount: () => void
 }
 
@@ -47,57 +42,45 @@ export const useCartStore = create<CartState>()(
       discountCode: null,
       discountType: null,
       discountValue: null,
-
-      get itemCount() {
-        return get().items.reduce((sum, item) => sum + item.quantity, 0)
-      },
-
-      get subtotal() {
-        return get().items.reduce((sum, item) => sum + item.unitPrice * item.quantity, 0)
-      },
-
-      get discountAmount() {
-        const { subtotal, discountType, discountValue } = get()
-        if (!discountType || !discountValue) return 0
-        return calculateDiscount(subtotal, discountType, discountValue)
-      },
-
-      get total() {
-        const { subtotal, discountAmount } = get()
-        const shipping = subtotal >= 50 ? 0 : 4.95
-        return Math.max(0, subtotal - discountAmount + shipping)
-      },
+      discountAmount: 0,
 
       addItem: (newItem) => {
         set((state) => {
-          // Check if same product + same personalizations already exists
           const existingIndex = state.items.findIndex(
             (item) =>
               item.productId === newItem.productId &&
               personalizationsMatch(item.personalizations, newItem.personalizations)
           )
 
+          let items: CartItem[]
           if (existingIndex >= 0) {
-            // Increment quantity
-            const items = [...state.items]
+            items = [...state.items]
             items[existingIndex] = {
               ...items[existingIndex],
               quantity: Math.min(items[existingIndex].quantity + newItem.quantity, 10),
             }
-            return { items }
+          } else {
+            items = [...state.items, { ...newItem, id: generateCartItemId() }]
           }
 
-          // Add new item
-          return {
-            items: [...state.items, { ...newItem, id: generateCartItemId() }],
-          }
+          const subtotal = items.reduce((s, i) => s + i.unitPrice * i.quantity, 0)
+          const discountAmount = state.discountType && state.discountValue
+            ? calculateDiscount(subtotal, state.discountType, state.discountValue)
+            : 0
+
+          return { items, discountAmount }
         })
       },
 
       removeItem: (id) => {
-        set((state) => ({
-          items: state.items.filter((item) => item.id !== id),
-        }))
+        set((state) => {
+          const items = state.items.filter((item) => item.id !== id)
+          const subtotal = items.reduce((s, i) => s + i.unitPrice * i.quantity, 0)
+          const discountAmount = state.discountType && state.discountValue
+            ? calculateDiscount(subtotal, state.discountType, state.discountValue)
+            : 0
+          return { items, discountAmount }
+        })
       },
 
       updateQuantity: (id, quantity) => {
@@ -105,23 +88,32 @@ export const useCartStore = create<CartState>()(
           get().removeItem(id)
           return
         }
-        set((state) => ({
-          items: state.items.map((item) =>
+        set((state) => {
+          const items = state.items.map((item) =>
             item.id === id ? { ...item, quantity: Math.min(quantity, 10) } : item
-          ),
-        }))
+          )
+          const subtotal = items.reduce((s, i) => s + i.unitPrice * i.quantity, 0)
+          const discountAmount = state.discountType && state.discountValue
+            ? calculateDiscount(subtotal, state.discountType, state.discountValue)
+            : 0
+          return { items, discountAmount }
+        })
       },
 
       clearCart: () => {
-        set({ items: [], discountCode: null, discountType: null, discountValue: null })
+        set({ items: [], discountCode: null, discountType: null, discountValue: null, discountAmount: 0 })
       },
 
       applyDiscount: (code, type, value) => {
-        set({ discountCode: code, discountType: type, discountValue: value })
+        const numericValue = Number(value)
+        const { items } = get()
+        const subtotal = items.reduce((s, i) => s + i.unitPrice * i.quantity, 0)
+        const discountAmount = calculateDiscount(subtotal, type, numericValue)
+        set({ discountCode: code, discountType: type, discountValue: numericValue, discountAmount })
       },
 
       removeDiscount: () => {
-        set({ discountCode: null, discountType: null, discountValue: null })
+        set({ discountCode: null, discountType: null, discountValue: null, discountAmount: 0 })
       },
     }),
     {
@@ -133,6 +125,7 @@ export const useCartStore = create<CartState>()(
         discountCode: state.discountCode,
         discountType: state.discountType,
         discountValue: state.discountValue,
+        discountAmount: state.discountAmount,
       }),
     }
   )
