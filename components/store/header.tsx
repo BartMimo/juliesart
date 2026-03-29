@@ -51,16 +51,20 @@ export function Header() {
             {/* Logo */}
             <Link href="/" className="flex items-center gap-2 group">
               <Image
-                src="/logo.png"
+                src="/logo2.png"
                 alt="Julies Art logo"
                 width={40}
                 height={40}
                 className="object-contain"
                 priority
               />
-              <span className="text-lg font-extrabold text-neutral-800 tracking-tight">
-                Julies <span className="text-brand-500">Art</span>
-              </span>
+              <Image
+                src="/naam.png"
+                alt="Julies Art"
+                width={100}
+                height={30}
+                className="object-contain"
+              />
             </Link>
 
             {/* Desktop nav */}

@@ -30,15 +30,19 @@ export function Footer() {
           <div className="lg:col-span-1">
             <div className="flex items-center gap-2 mb-4">
               <Image
-                src="/logo.png"
+                src="/logo2.png"
                 alt="Julies Art logo"
                 width={40}
                 height={40}
                 className="object-contain"
               />
-              <span className="text-lg font-extrabold text-neutral-800">
-                Julies <span className="text-brand-500">Art</span>
-              </span>
+              <Image
+                src="/naam.png"
+                alt="Julies Art"
+                width={100}
+                height={30}
+                className="object-contain"
+              />
             </div>
             <p className="text-sm text-neutral-500 leading-relaxed mb-5">
               Gepersonaliseerde kindercadeaus, met liefde gemaakt. Elk stuk is uniek, net als jouw kind.
