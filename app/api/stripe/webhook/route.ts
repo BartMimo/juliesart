@@ -33,10 +33,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ received: true })
   }
 
-  const session = event.data.object as Stripe.CheckoutSession
+  const sessionSnapshot = event.data.object as Stripe.CheckoutSession
 
   // Prevent duplicate order creation
-  if (session.payment_status !== 'paid') {
+  if (sessionSnapshot.payment_status !== 'paid') {
     return NextResponse.json({ received: true })
   }
 
@@ -46,13 +46,17 @@ export async function POST(request: NextRequest) {
   const { data: existingOrder } = await supabase
     .from('orders')
     .select('id')
-    .eq('stripe_session_id', session.id)
+    .eq('stripe_session_id', sessionSnapshot.id)
     .single()
 
   if (existingOrder) {
-    console.log(`Order already exists for session ${session.id}`)
+    console.log(`Order already exists for session ${sessionSnapshot.id}`)
     return NextResponse.json({ received: true })
   }
+
+  // Retrieve full session from Stripe to ensure all fields (including shipping_details)
+  // are present regardless of the webhook endpoint's API version
+  const session = await stripe.checkout.sessions.retrieve(sessionSnapshot.id)
 
   try {
     // Parse cart items from metadata
