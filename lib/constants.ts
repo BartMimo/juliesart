@@ -27,7 +27,7 @@ export const MAX_CART_ITEM_QUANTITY = 10
 export const PRODUCT_IMAGE_ASPECT_RATIO = '4/3'
 
 // Social
-export const INSTAGRAM_URL = 'https://instagram.com/juliesart'
+export const INSTAGRAM_URL = 'https://www.instagram.com/julies.art7'
 export const FACEBOOK_URL = 'https://facebook.com/juliesart'
 
 // Contact
