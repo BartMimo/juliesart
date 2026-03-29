@@ -116,7 +116,7 @@ export default function ContactPage() {
                 </div>
                 <h2 className="text-2xl font-bold text-neutral-800 mb-2">Bericht ontvangen!</h2>
                 <p className="text-neutral-500">
-                  Bedankt voor je bericht. We reageren zo snel mogelijk, uiterlijk binnen 1 werkdag.
+                  Bedankt voor je bericht. We reageren zo snel mogelijk, uiterlijk binnen 3 werkdagen.
                 </p>
                 <button
                   onClick={() => setSent(false)}

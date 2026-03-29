@@ -51,12 +51,15 @@ export async function getOrCreateStripeCoupon(discount: DiscountCode): Promise<s
     }
   }
 
+  // Supabase returns NUMERIC columns as strings — ensure we work with numbers
+  const value = Number(discount.value)
+
   const coupon = await stripe.coupons.create({
     id: `JA_${discount.code}_${Date.now()}`,
     name: discount.code,
     ...(discount.type === 'percentage'
-      ? { percent_off: discount.value }
-      : { amount_off: Math.round(discount.value * 100), currency: 'eur' }
+      ? { percent_off: value }
+      : { amount_off: Math.round(value * 100), currency: 'eur' }
     ),
     duration: 'once',
     max_redemptions: discount.max_uses ?? undefined,
@@ -91,17 +94,6 @@ export function getShippingOptions(subtotal: number): Stripe.Checkout.SessionCre
         type: 'fixed_amount',
         fixed_amount: { amount: 495, currency: 'eur' },
         display_name: 'Standaard verzending',
-        delivery_estimate: {
-          minimum: { unit: 'business_day', value: 2 },
-          maximum: { unit: 'business_day', value: 5 },
-        },
-      },
-    },
-    {
-      shipping_rate_data: {
-        type: 'fixed_amount',
-        fixed_amount: { amount: 0, currency: 'eur' },
-        display_name: `Gratis verzending (vanaf ${formatPrice(FREE_THRESHOLD)})`,
         delivery_estimate: {
           minimum: { unit: 'business_day', value: 2 },
           maximum: { unit: 'business_day', value: 5 },

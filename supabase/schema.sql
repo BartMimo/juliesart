@@ -541,7 +541,7 @@ CREATE POLICY "Admins can manage site settings"
 -- HELPER RPC FUNCTIONS
 -- ============================================================
 
--- Safely increment the usage_count of a discount code
+-- Safely increment the current_uses of a discount code
 CREATE OR REPLACE FUNCTION public.increment_discount_usage(code_id UUID)
 RETURNS void
 LANGUAGE plpgsql
@@ -549,7 +549,7 @@ SECURITY DEFINER SET search_path = public
 AS $$
 BEGIN
   UPDATE public.discount_codes
-  SET usage_count = usage_count + 1
+  SET current_uses = current_uses + 1
   WHERE id = code_id;
 END;
 $$;
