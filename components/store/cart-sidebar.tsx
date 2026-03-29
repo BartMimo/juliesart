@@ -117,7 +117,7 @@ export function CartSidebar({ open, onClose }: CartSidebarProps) {
                     animate={{ opacity: 1 }}
                     className="flex flex-col items-center justify-center h-full text-center py-16"
                   >
-                    <Image src="/winkelwagen.png" alt="Lege winkelwagen" width={120} height={120} className="mb-4" />
+                    <Image src="/winkelwagen.png" alt="Lege winkelwagen" width={180} height={180} className="mb-4" />
                     <p className="font-semibold text-neutral-700 text-lg mb-2">
                       Je winkelwagen is leeg
                     </p>
