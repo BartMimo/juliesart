@@ -14,6 +14,7 @@ import {
   Settings,
   ChevronRight,
   LogOut,
+  ClipboardList,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
@@ -21,6 +22,7 @@ import { useRouter } from 'next/navigation'
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
+  { href: '/admin/todo', label: 'To do', icon: ClipboardList },
   { href: '/admin/producten', label: 'Producten', icon: Package },
   { href: '/admin/categorieen', label: 'Categorieën', icon: FolderOpen },
   { href: '/admin/bestellingen', label: 'Bestellingen', icon: ShoppingCart },
