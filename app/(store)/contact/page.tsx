@@ -32,12 +32,21 @@ export default function ContactPage() {
 
   const onSubmit = async (data: ContactFormData) => {
     setLoading(true)
-    // Simulate send (replace with actual email sending in production)
-    await new Promise((r) => setTimeout(r, 1000))
-    setSent(true)
-    reset()
-    setLoading(false)
-    toast.success('Bericht verzonden!', 'We reageren zo snel mogelijk.')
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      })
+      if (!res.ok) throw new Error('Verzenden mislukt')
+      setSent(true)
+      reset()
+      toast.success('Bericht verzonden!', 'We reageren zo snel mogelijk.')
+    } catch {
+      toast.error('Er ging iets mis', 'Probeer het later opnieuw of mail ons direct.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (

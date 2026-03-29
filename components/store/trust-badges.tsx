@@ -1,6 +1,7 @@
 'use client'
 
 import { Heart, Truck, Shield, RefreshCw } from 'lucide-react'
+import Link from 'next/link'
 import { TRUST_BADGES } from '@/lib/constants'
 import { SectionReveal, StaggerReveal, staggerItem } from './section-reveal'
 import { motion } from 'framer-motion'
@@ -37,12 +38,9 @@ export function TrustBadges({ variant = 'section' }: { variant?: 'section' | 'in
         <StaggerReveal className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           {TRUST_BADGES.map((badge) => {
             const Icon = iconMap[badge.icon]
-            return (
-              <motion.div
-                key={badge.icon}
-                variants={staggerItem}
-                className="flex flex-col items-center text-center gap-3"
-              >
+            const isContact = badge.icon === 'refresh'
+            const content = (
+              <>
                 <div className="w-14 h-14 rounded-2xl bg-white shadow-soft flex items-center justify-center">
                   <Icon className="h-6 w-6 text-brand-500" />
                 </div>
@@ -50,6 +48,19 @@ export function TrustBadges({ variant = 'section' }: { variant?: 'section' | 'in
                   <h4 className="font-bold text-neutral-800 text-sm">{badge.title}</h4>
                   <p className="text-xs text-neutral-500 mt-1 leading-relaxed">{badge.description}</p>
                 </div>
+              </>
+            )
+            return (
+              <motion.div
+                key={badge.icon}
+                variants={staggerItem}
+                className="flex flex-col items-center text-center gap-3"
+              >
+                {isContact ? (
+                  <Link href="/contact" className="flex flex-col items-center gap-3 hover:opacity-80 transition-opacity">
+                    {content}
+                  </Link>
+                ) : content}
               </motion.div>
             )
           })}

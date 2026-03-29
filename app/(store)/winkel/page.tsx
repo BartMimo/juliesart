@@ -37,7 +37,7 @@ export default async function WinkelPage({ searchParams }: WinkelPageProps) {
     .eq('is_active', true)
 
   if (zoeken) {
-    query = query.textSearch('fts', zoeken, { type: 'websearch', config: 'dutch' })
+    query = query.ilike('name', `%${zoeken}%`)
   }
 
   if (categorie) {
