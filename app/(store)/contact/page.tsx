@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { motion } from 'framer-motion'
-import { Mail, Clock, Send } from 'lucide-react'
+import { Mail, Clock, Send, Gift } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { Button } from '@/components/ui/button'
@@ -89,7 +89,12 @@ export default function ContactPage() {
               ))}
 
               <div className="bg-brand-50 border border-brand-100 rounded-2xl p-5 mt-6">
-                <p className="text-sm font-semibold text-brand-700 mb-2">🎁 Speciale wens?</p>
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="w-7 h-7 rounded-full bg-brand-100 flex items-center justify-center shrink-0">
+                    <Gift className="h-3.5 w-3.5 text-brand-600" />
+                  </div>
+                  <p className="text-sm font-semibold text-brand-700">Speciale wens?</p>
+                </div>
                 <p className="text-sm text-brand-600 leading-relaxed">
                   Wil je een product op maat voor een bijzondere gelegenheid?
                   Stuur ons een bericht en we denken graag met je mee!
@@ -106,7 +111,9 @@ export default function ContactPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 className="bg-white rounded-3xl border border-neutral-100 shadow-card p-10 text-center"
               >
-                <div className="text-5xl mb-4">💌</div>
+                <div className="w-16 h-16 rounded-full bg-brand-100 flex items-center justify-center mx-auto mb-4">
+                  <Mail className="h-8 w-8 text-brand-600" />
+                </div>
                 <h2 className="text-2xl font-bold text-neutral-800 mb-2">Bericht ontvangen!</h2>
                 <p className="text-neutral-500">
                   Bedankt voor je bericht. We reageren zo snel mogelijk, uiterlijk binnen 1 werkdag.

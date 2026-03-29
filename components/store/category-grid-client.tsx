@@ -2,15 +2,15 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Smile, Package, Heart, Gift } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { SectionReveal, StaggerReveal, staggerItem } from './section-reveal'
 
-const categoryEmojis: Record<string, string> = {
-  tandendoosjes: '🦷',
-  'houten-koffertjes': '🧳',
-  'siliconen-slabbers': '🍼',
-  kraamcadeaus: '🎀',
+const categoryIcons: Record<string, React.ElementType> = {
+  tandendoosjes: Smile,
+  'houten-koffertjes': Package,
+  'siliconen-slabbers': Heart,
+  kraamcadeaus: Gift,
 }
 
 type Category = {
@@ -59,9 +59,14 @@ export function CategoryGridClient({ categories }: CategoryGridClientProps) {
                     />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <span className="text-6xl transition-transform duration-300 group-hover:scale-125">
-                        {categoryEmojis[category.slug] ?? '🎁'}
-                      </span>
+                      {(() => {
+                        const Icon = categoryIcons[category.slug] ?? Gift
+                        return (
+                          <div className="w-16 h-16 rounded-2xl bg-white shadow-soft flex items-center justify-center">
+                            <Icon className="h-8 w-8 text-brand-500" />
+                          </div>
+                        )
+                      })()}
                     </div>
                   )}
                 </div>

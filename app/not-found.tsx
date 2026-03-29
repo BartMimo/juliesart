@@ -1,10 +1,13 @@
 import Link from 'next/link'
+import { SearchX } from 'lucide-react'
 
 export default function NotFound() {
   return (
     <div className="min-h-screen bg-cream flex items-center justify-center px-4">
       <div className="text-center max-w-md">
-        <div className="text-8xl mb-6">🌸</div>
+        <div className="w-24 h-24 rounded-full bg-brand-100 flex items-center justify-center mx-auto mb-6">
+          <SearchX className="h-12 w-12 text-brand-500" />
+        </div>
         <h1 className="text-4xl font-extrabold text-neutral-800 mb-3">
           Oeps! Pagina niet gevonden
         </h1>

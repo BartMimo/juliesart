@@ -98,7 +98,7 @@ function BetalingSucesContent() {
           </motion.div>
 
           <h1 className="text-3xl sm:text-4xl font-extrabold text-neutral-800 mb-3">
-            Bedankt voor je bestelling! 🎀
+            Bedankt voor je bestelling!
           </h1>
           <p className="text-neutral-500 text-lg mb-8">
             Je betaling is ontvangen en je bestelling is bevestigd.

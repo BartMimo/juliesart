@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { ArrowRight, ShoppingBag, Tag } from 'lucide-react'
+import { ArrowRight, ShoppingBag, Tag, Shield } from 'lucide-react'
 import { useCartStore } from '@/lib/cart/store'
 import { CartItemRow } from '@/components/store/cart-item'
 import { DiscountInput } from '@/components/store/discount-input'
@@ -58,7 +58,9 @@ export default function WinkelwagenPage() {
     return (
       <div className="py-20">
         <div className="container-brand max-w-lg mx-auto text-center">
-          <div className="text-7xl mb-6">🛍️</div>
+          <div className="w-24 h-24 rounded-full bg-brand-100 flex items-center justify-center mx-auto mb-6">
+            <ShoppingBag className="h-12 w-12 text-brand-500" />
+          </div>
           <h1 className="text-3xl font-bold text-neutral-800 mb-3">
             Je winkelwagen is leeg
           </h1>
@@ -164,7 +166,8 @@ export default function WinkelwagenPage() {
 
               {/* Payment icons */}
               <div className="flex flex-wrap items-center justify-center gap-1 text-xs text-neutral-400 text-center">
-                <span>🔒 Veilig betalen via</span>
+                <Shield className="h-3.5 w-3.5 text-neutral-400 shrink-0" />
+                <span>Veilig betalen via</span>
                 <span className="font-semibold text-neutral-500">iDEAL · Mastercard · Visa · Bancontact</span>
               </div>
             </div>

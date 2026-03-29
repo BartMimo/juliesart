@@ -4,6 +4,7 @@ import { FeaturedProducts } from '@/components/store/featured-products'
 import { TrustBadges } from '@/components/store/trust-badges'
 import { SectionReveal } from '@/components/store/section-reveal'
 import { SITE_NAME, SITE_DESCRIPTION } from '@/lib/constants'
+import { Hand, Heart, Leaf } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: `${SITE_NAME} — Gepersonaliseerde Kindercadeaus`,
@@ -34,14 +35,16 @@ export default function HomePage() {
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center">
                 {[
-                  { emoji: '✋', title: 'Handgemaakt', desc: 'Elk product wordt met de hand vervaardigd en met aandacht afgewerkt.' },
-                  { emoji: '💌', title: 'Persoonlijk', desc: 'Jouw keuzes worden precies zo verwerkt als jij ze aangeeft.' },
-                  { emoji: '🌍', title: 'Duurzaam', desc: 'We werken met kwalitatieve, duurzame materialen die lang meegaan.' },
-                ].map((item) => (
-                  <div key={item.title} className="p-6 rounded-2xl bg-brand-50 border border-brand-100">
-                    <div className="text-4xl mb-3">{item.emoji}</div>
-                    <h3 className="font-bold text-neutral-800 mb-2">{item.title}</h3>
-                    <p className="text-sm text-neutral-500 leading-relaxed">{item.desc}</p>
+                  { icon: Hand, title: 'Handgemaakt', desc: 'Elk product wordt met de hand vervaardigd en met aandacht afgewerkt.' },
+                  { icon: Heart, title: 'Persoonlijk', desc: 'Jouw keuzes worden precies zo verwerkt als jij ze aangeeft.' },
+                  { icon: Leaf, title: 'Duurzaam', desc: 'We werken met kwalitatieve, duurzame materialen die lang meegaan.' },
+                ].map(({ icon: Icon, title, desc }) => (
+                  <div key={title} className="p-6 rounded-2xl bg-brand-50 border border-brand-100">
+                    <div className="w-14 h-14 rounded-2xl bg-white shadow-soft flex items-center justify-center mx-auto mb-4">
+                      <Icon className="h-6 w-6 text-brand-500" />
+                    </div>
+                    <h3 className="font-bold text-neutral-800 mb-2">{title}</h3>
+                    <p className="text-sm text-neutral-500 leading-relaxed">{desc}</p>
                   </div>
                 ))}
               </div>

@@ -21,7 +21,7 @@ export default async function AccountLayout({ children }: { children: React.Reac
       <div className="container-brand">
         <div className="mb-8">
           <h1 className="heading-section text-3xl text-neutral-800">
-            Hallo, {profile?.full_name?.split(' ')[0] ?? 'welkom'}! 👋
+            Hallo, {profile?.full_name?.split(' ')[0] ?? 'welkom'}!
           </h1>
           <p className="text-neutral-500 mt-1">Beheer je account en bekijk je bestellingen.</p>
         </div>
