@@ -124,7 +124,7 @@ export function HomepageHero2() {
                   ))}
                 </div>
                 <p className="text-xs font-semibold text-neutral-600">
-                  500+ blije ouders & opa's en oma's
+                  100+ blije ouders & opa's en oma's
                 </p>
               </div>
             </motion.div>
@@ -347,7 +347,7 @@ export function Testimonials2() {
               <Star key={i} className="h-5 w-5 fill-peach-400 text-peach-400" />
             ))}
             <span className="ml-2 text-neutral-500 text-sm font-semibold">
-              5.0 gemiddeld · 500+ beoordelingen
+              4.6 gemiddeld · 100+ beoordelingen
             </span>
           </div>
         </SectionReveal>
@@ -596,7 +596,7 @@ export function FinalCta2() {
                 <Check className="h-4 w-4 text-brand-400" /> Gratis v/a €50
               </span>
               <span className="flex items-center gap-1.5">
-                <Check className="h-4 w-4 text-brand-400" /> 500+ tevreden klanten
+                <Check className="h-4 w-4 text-brand-400" /> 100+ tevreden klanten
               </span>
             </div>
           </div>
