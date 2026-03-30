@@ -135,7 +135,7 @@ export function HomepageHero2() {
             initial={{ opacity: 0, scale: 0.95, x: 20 }}
             animate={{ opacity: 1, scale: 1, x: 0 }}
             transition={{ duration: 0.7, delay: 0.2, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="relative flex items-center justify-center py-8"
+            className="relative hidden sm:flex items-center justify-center py-8"
           >
             {/* Background circle */}
             <div className="absolute w-[340px] h-[340px] sm:w-[420px] sm:h-[420px] bg-gradient-to-br from-brand-100 via-peach-50 to-lavender-100 rounded-full" />
