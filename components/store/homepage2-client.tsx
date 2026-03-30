@@ -160,6 +160,16 @@ export function HomepageHero2() {
                 height={58}
                 className="drop-shadow-sm"
               />
+              <div className="flex flex-wrap gap-2 justify-center">
+                {['Met liefde', 'Gepersonaliseerd', 'Uniek', 'Duurzaam'].map((tag) => (
+                  <span
+                    key={tag}
+                    className="bg-white text-brand-600 text-xs font-bold px-3 py-1.5 rounded-full shadow-soft border border-brand-100"
+                  >
+                    ✦ {tag}
+                  </span>
+                ))}
+              </div>
             </div>
 
           </motion.div>
@@ -434,16 +444,6 @@ export function BrandStory2() {
                     width={180}
                     height={55}
                   />
-                  <div className="flex flex-wrap gap-2 justify-center">
-                    {['Met liefde', 'Gepersonaliseerd', 'Uniek', 'Duurzaam'].map((tag) => (
-                      <span
-                        key={tag}
-                        className="bg-white text-brand-600 text-xs font-bold px-3 py-1.5 rounded-full shadow-soft border border-brand-100"
-                      >
-                        ✦ {tag}
-                      </span>
-                    ))}
-                  </div>
                 </div>
               </div>
             </div>
