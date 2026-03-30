@@ -15,6 +15,7 @@ import {
   ChevronRight,
   LogOut,
   ClipboardList,
+  Star,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
@@ -27,6 +28,7 @@ const navItems = [
   { href: '/admin/categorieen', label: 'Categorieën', icon: FolderOpen },
   { href: '/admin/bestellingen', label: 'Bestellingen', icon: ShoppingCart },
   { href: '/admin/klanten', label: 'Klanten', icon: Users },
+  { href: '/admin/beoordelingen', label: 'Beoordelingen', icon: Star },
   { href: '/admin/kortingscodes', label: 'Kortingscodes', icon: Tag },
   { href: '/admin/analytics', label: 'Analytics', icon: BarChart2 },
 ]

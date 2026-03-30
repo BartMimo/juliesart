@@ -12,6 +12,7 @@ import {
   validatePersonalizationForm,
 } from '@/components/store/personalization-form'
 import { TrustBadges } from '@/components/store/trust-badges'
+import { ReviewSection } from '@/components/store/reviews'
 import { SectionReveal } from '@/components/store/section-reveal'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -309,6 +310,11 @@ export default function ProductPage() {
             </div>
           </SectionReveal>
         )}
+
+        {/* Reviews */}
+        <SectionReveal className="mt-16 max-w-3xl">
+          <ReviewSection productId={product.id} />
+        </SectionReveal>
       </div>
     </div>
   )

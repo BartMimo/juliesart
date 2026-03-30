@@ -363,6 +363,30 @@ INSERT INTO public.site_settings (key, label, value) VALUES
   ('shop_tagline', 'Tagline', '"Gepersonaliseerde kindercadeaus met liefde gemaakt"');
 
 -- ============================================================
+-- REVIEWS
+-- ============================================================
+CREATE TABLE public.reviews (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  product_id  UUID NOT NULL REFERENCES public.products(id) ON DELETE CASCADE,
+  user_id     UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+  author_name TEXT NOT NULL,
+  rating      SMALLINT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+  body        TEXT,
+  status      TEXT NOT NULL DEFAULT 'pending'
+    CHECK (status IN ('pending', 'approved', 'rejected')),
+  created_at  TIMESTAMPTZ NOT NULL DEFAULT now(),
+  updated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE TRIGGER set_reviews_updated_at
+  BEFORE UPDATE ON public.reviews
+  FOR EACH ROW EXECUTE FUNCTION public.set_updated_at();
+
+CREATE INDEX idx_reviews_product ON public.reviews(product_id);
+CREATE INDEX idx_reviews_status ON public.reviews(status);
+CREATE INDEX idx_reviews_created ON public.reviews(created_at DESC);
+
+-- ============================================================
 -- ROW LEVEL SECURITY (RLS)
 -- ============================================================
 
@@ -535,6 +559,23 @@ CREATE POLICY "Public can read site settings"
 
 CREATE POLICY "Admins can manage site settings"
   ON public.site_settings FOR ALL
+  USING (public.is_admin());
+
+-- ----------------------------------------
+-- REVIEWS policies
+-- ----------------------------------------
+ALTER TABLE public.reviews ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public can read approved reviews"
+  ON public.reviews FOR SELECT
+  USING (status = 'approved' OR public.is_admin());
+
+CREATE POLICY "Anyone can submit a review"
+  ON public.reviews FOR INSERT
+  WITH CHECK (true);
+
+CREATE POLICY "Admins can moderate reviews"
+  ON public.reviews FOR UPDATE
   USING (public.is_admin());
 
 -- ============================================================
