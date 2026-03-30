@@ -192,7 +192,7 @@ export function OrderConfirmationEmail({ order }: OrderConfirmationEmailProps) {
                 </Text>
                 <Text className="text-[#737373] text-sm leading-relaxed m-0">
                   We verwerken je bestelling zo snel mogelijk. Gepersonaliseerde producten worden
-                  met de hand gemaakt en zijn over het algemeen <strong>binnen 3–5 werkdagen</strong>{' '}
+                  op maat gemaakt en zijn over het algemeen <strong>binnen 3–5 werkdagen</strong>{' '}
                   bij je bezorgd. Je ontvangt een e-mail zodra je pakketje onderweg is.
                 </Text>
               </Section>

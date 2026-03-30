@@ -30,7 +30,7 @@ export function FeaturedProductsClient({
               Bestsellers & uitgelicht
             </h2>
             <p className="mt-2 max-w-md text-neutral-500">
-              Onze meest geliefde producten, geliefd door ouders en grootouders
+              Onze meest geliefde producten, geliefd door ouders en opa's en oma's
               overal in Nederland.
             </p>
           </div>

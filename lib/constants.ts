@@ -5,7 +5,7 @@
 export const SITE_NAME = 'Julies Art'
 export const SITE_TAGLINE = 'Gepersonaliseerde kindercadeaus met liefde gemaakt'
 export const SITE_DESCRIPTION =
-  'Ontdek onze collectie gepersonaliseerde kindercadeaus. Van tandendoosjes tot houten koffertjes — elk stuk wordt met de hand gemaakt en voorzien van de naam van jouw kind.'
+  'Ontdek onze collectie gepersonaliseerde kindercadeaus. Van tandendoosjes tot houten koffertjes — elk stuk wordt voorzien van de naam van jouw kind.'
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://juliesart.nl'
 
 // Shipping
@@ -40,7 +40,7 @@ export const TRUST_BADGES = [
   {
     icon: 'heart',
     title: 'Met liefde gemaakt',
-    description: 'Elk product wordt met aandacht en zorg handgemaakt.',
+    description: 'Elk product wordt met aandacht en zorg voor jou gemaakt.',
   },
   {
     icon: 'truck',

@@ -156,7 +156,7 @@ function BetalingSucesContent() {
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
             {[
               { icon: Mail, title: 'Bevestigingsmail', desc: 'Je ontvangt een e-mail met alle details van je bestelling.' },
-              { icon: Package, title: 'Handgemaakt', desc: 'We gaan direct aan de slag met het personaliseren van je producten.' },
+              { icon: Package, title: 'Personaliseren', desc: 'We gaan direct aan de slag met het personaliseren van je producten.' },
               { icon: ArrowRight, title: 'Verzending', desc: 'Je pakketje is er over 3–5 werkdagen — net op tijd!' },
             ].map(({ icon: Icon, title, desc }) => (
               <div key={title} className="bg-brand-50 rounded-2xl p-4 text-center">

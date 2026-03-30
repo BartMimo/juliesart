@@ -46,7 +46,7 @@ export function HomepageHero2() {
               className="inline-flex items-center gap-2 bg-white border border-brand-200 text-brand-700 text-sm font-semibold px-4 py-2 rounded-full shadow-soft mb-6"
             >
               <Sparkles className="h-4 w-4 text-brand-500" />
-              Handgemaakt in Nederland ✦ Gratis verzending v/a €50
+              Gepersonaliseerd in Nederland ✦ Gratis verzending v/a €50
             </motion.div>
 
             {/* Headline */}
@@ -68,8 +68,8 @@ export function HomepageHero2() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-lg text-neutral-500 mb-8 leading-relaxed max-w-lg"
             >
-              Gepersonaliseerde cadeaus van hout — voorzien van de naam en het verhaal van jouw kleintje.
-              Elk stuk met de hand gemaakt, met liefde verstuurd.
+              Gemaakt van hout, op naam van jouw kind.
+              Een blijvend aandenken dat jaar na jaar vertelt hoe geliefd het is.
             </motion.p>
 
             {/* CTAs */}
@@ -124,7 +124,7 @@ export function HomepageHero2() {
                   ))}
                 </div>
                 <p className="text-xs font-semibold text-neutral-600">
-                  500+ blije ouders & grootouders
+                  500+ blije ouders & opa's en oma's
                 </p>
               </div>
             </motion.div>
@@ -162,35 +162,6 @@ export function HomepageHero2() {
               />
             </div>
 
-            {/* Floating badge 1 — Naam erin */}
-            <motion.div
-              animate={{ y: [0, -10, 0] }}
-              transition={{ repeat: Infinity, duration: 3.2, ease: 'easeInOut' }}
-              className="absolute top-4 right-4 sm:-right-2 bg-white border border-brand-100 shadow-hover rounded-2xl px-4 py-2.5 flex items-center gap-2 z-20"
-            >
-              <span className="text-brand-500 font-black text-base">✦</span>
-              <span className="text-sm font-bold text-neutral-800">Naam erin</span>
-            </motion.div>
-
-            {/* Floating badge 2 — Gratis verzending */}
-            <motion.div
-              animate={{ y: [0, 10, 0] }}
-              transition={{ repeat: Infinity, duration: 3.8, ease: 'easeInOut', delay: 0.6 }}
-              className="absolute bottom-8 left-2 sm:-left-4 bg-brand-500 shadow-hover rounded-2xl px-4 py-2.5 flex items-center gap-2 z-20"
-            >
-              <Truck className="h-4 w-4 text-white shrink-0" />
-              <span className="text-sm font-bold text-white">Gratis v/a €50</span>
-            </motion.div>
-
-            {/* Floating badge 3 — Met liefde */}
-            <motion.div
-              animate={{ y: [0, -7, 0] }}
-              transition={{ repeat: Infinity, duration: 4.2, ease: 'easeInOut', delay: 1.2 }}
-              className="absolute bottom-24 right-0 sm:-right-6 bg-white border border-brand-100 shadow-hover rounded-2xl px-4 py-2.5 flex items-center gap-2 z-20"
-            >
-              <Heart className="h-4 w-4 fill-red-400 text-red-400 shrink-0" />
-              <span className="text-sm font-bold text-neutral-800">Met liefde</span>
-            </motion.div>
           </motion.div>
         </div>
       </div>
@@ -202,7 +173,7 @@ export function HomepageHero2() {
 // TRUST STRIP — Contrasterende balk
 // ─────────────────────────────────────────────────────
 const trustItems = [
-  { icon: Heart, label: 'Handgemaakt', sub: 'Met zorg en liefde' },
+  { icon: Heart, label: 'Met zorg gemaakt', sub: 'Persoonlijk voor jou' },
   { icon: Sparkles, label: 'Volledig op maat', sub: 'Jouw naam, jouw keuze' },
   { icon: Truck, label: 'Snel geleverd', sub: '3–5 werkdagen' },
   { icon: Package, label: 'Gratis verzending', sub: 'Vanaf €50' },
@@ -238,7 +209,7 @@ const steps = [
     num: 1,
     icon: ShoppingBag,
     title: 'Kies je product',
-    desc: 'Bekijk onze collectie gepersonaliseerde cadeaus en kies het product dat bij jouw kind past.',
+    desc: 'Bekijk onze collectie en kies het product dat bij jouw kind past.',
     bgColor: 'bg-brand-100',
     iconColor: 'text-brand-600',
     numColor: 'bg-brand-500',
@@ -247,7 +218,7 @@ const steps = [
     num: 2,
     icon: Pencil,
     title: 'Personaliseer',
-    desc: 'Vul de naam in, kies kleuren en lettertype. Elk detail wordt precies zo gemaakt als jij aangeeft.',
+    desc: 'Vul de naam in, kies de kleur en het lettertype wat bij jou past.',
     bgColor: 'bg-peach-100',
     iconColor: 'text-peach-500',
     numColor: 'bg-peach-400',
@@ -256,7 +227,7 @@ const steps = [
     num: 3,
     icon: Heart,
     title: 'Ontvang met liefde',
-    desc: 'Wij maken het cadeau met de hand en bezorgen het netjes bij je thuis. Binnen 3–5 werkdagen.',
+    desc: 'Wij maken het naar jouw wens en bezorgen binnen 3 - 5 werkdagen bij je thuis.',
     bgColor: 'bg-lavender-100',
     iconColor: 'text-lavender-500',
     numColor: 'bg-lavender-400',
@@ -359,7 +330,7 @@ export function Testimonials2() {
             Wat anderen zeggen
           </p>
           <h2 className="heading-section text-3xl sm:text-4xl text-neutral-800 mb-4">
-            Geliefd door ouders & grootouders
+            Geliefd door ouders & opa's en oma's
           </h2>
           <div className="flex items-center justify-center gap-1.5">
             {[1, 2, 3, 4, 5].map((i) => (
@@ -464,7 +435,7 @@ export function BrandStory2() {
                     height={55}
                   />
                   <div className="flex flex-wrap gap-2 justify-center">
-                    {['Met liefde', 'Handgemaakt', 'Uniek', 'Duurzaam'].map((tag) => (
+                    {['Met liefde', 'Gepersonaliseerd', 'Uniek', 'Duurzaam'].map((tag) => (
                       <span
                         key={tag}
                         className="bg-white text-brand-600 text-xs font-bold px-3 py-1.5 rounded-full shadow-soft border border-brand-100"
@@ -491,13 +462,13 @@ export function BrandStory2() {
               een glimlach, een gevoel van &ldquo;dit is speciaal voor mij gemaakt&rdquo;.
             </p>
             <p className="text-neutral-500 leading-relaxed mb-8">
-              Elk product wordt met de hand gemaakt, voorzien van de naam of het lievelingsicoon van
-              jouw kind. Geen fabriekswerk — maar echte aandacht voor elk detail, van begin tot eind.
+              Elk product wordt voorzien van de naam of het lievelingsicoon van
+              jouw kind. Met echte aandacht voor elk detail, van begin tot eind.
             </p>
 
             <ul className="space-y-3 mb-10">
               {[
-                '100% handgemaakt in Nederland',
+                '100% gepersonaliseerd in Nederland',
                 'Duurzame, kwalitatieve materialen',
                 'Elk stuk uniek voor jouw kind',
                 'Al honderden blije gezinnen geholpen',
@@ -616,7 +587,7 @@ export function FinalCta2() {
             {/* Mini trust */}
             <div className="flex flex-wrap items-center justify-center gap-6 mt-10 text-brand-300 text-sm">
               <span className="flex items-center gap-1.5">
-                <Check className="h-4 w-4 text-brand-400" /> Handgemaakt
+                <Check className="h-4 w-4 text-brand-400" /> Gepersonaliseerd
               </span>
               <span className="flex items-center gap-1.5">
                 <Check className="h-4 w-4 text-brand-400" /> 3–5 werkdagen

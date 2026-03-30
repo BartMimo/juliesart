@@ -9,7 +9,7 @@
 -- ============================================================
 INSERT INTO public.categories (id, name, slug, description, sort_order, is_active) VALUES
   ('cat-001-0000-0000-0000-000000000001', 'Tandendoosjes', 'tandendoosjes', 'Lieve tandendoosjes voor het bewaren van het eerste melktandje. Gepersonaliseerd met de naam van jouw kind.', 1, true),
-  ('cat-002-0000-0000-0000-000000000002', 'Houten koffertjes', 'houten-koffertjes', 'Handgemaakte houten koffertjes als bijzonder kraamcadeau of verjaarscadeau, met naam of initialen.', 2, true),
+  ('cat-002-0000-0000-0000-000000000002', 'Houten koffertjes', 'houten-koffertjes', 'Houten koffertjes als bijzonder kraamcadeau of verjaarscadeau, gepersonaliseerd met naam of initialen.', 2, true),
   ('cat-003-0000-0000-0000-000000000003', 'Siliconen slabbers', 'siliconen-slabbers', 'Zachte, duurzame siliconen slabbers in prachtige pasteltinten — met de naam van jouw kleintje erop.', 3, true),
   ('cat-004-0000-0000-0000-000000000004', 'Kraamcadeaus', 'kraamcadeaus', 'De mooiste gepersonaliseerde kraamcadeaus voor het nieuwe kindje en de trotse ouders.', 4, true);
 
@@ -23,7 +23,7 @@ INSERT INTO public.products (id, name, slug, description, short_description, pri
   'prod-001-0000-0000-0000-000000000001',
   'Gepersonaliseerd Tandendoosje',
   'gepersonaliseerd-tandendoosje',
-  '<p>Dit lieve tandendoosje is het perfecte aandenken voor het eerste verloren melktandje van jouw kind. Handgemaakt van duurzaam hout, voorzien van een zachte binnenbekleding en de naam van jouw kind.</p><p>Het doosje past gemakkelijk in een kistje of plakboek en is een bijzonder klein cadeau dat een groot hart vertegenwoordigt.</p><ul><li>Materiaal: duurzaam berkenhout</li><li>Afmetingen: ca. 5 × 4 × 2,5 cm</li><li>Binnenbekleding van zacht fluweel</li><li>Inclusief cadeauverpakking</li></ul>',
+  '<p>Dit lieve tandendoosje is het perfecte aandenken voor het eerste verloren melktandje van jouw kind. Gemaakt van duurzaam hout, voorzien van een zachte binnenbekleding en de naam van jouw kind.</p><p>Het doosje past gemakkelijk in een kistje of plakboek en is een bijzonder klein cadeau dat een groot hart vertegenwoordigt.</p><ul><li>Materiaal: duurzaam berkenhout</li><li>Afmetingen: ca. 5 × 4 × 2,5 cm</li><li>Binnenbekleding van zacht fluweel</li><li>Inclusief cadeauverpakking</li></ul>',
   'Bewaar het eerste melktandje op een bijzondere manier — met de naam van jouw kleintje.',
   14.95,
   NULL,
@@ -31,7 +31,7 @@ INSERT INTO public.products (id, name, slug, description, short_description, pri
   true,
   true,
   'Gepersonaliseerd Tandendoosje | Julies Art',
-  'Bestel een gepersonaliseerd houten tandendoosje met de naam van jouw kind. Handgemaakt, duurzaam en een prachtig aandenken.'
+  'Bestel een gepersonaliseerd houten tandendoosje met de naam van jouw kind. Duurzaam en een prachtig aandenken.'
 ),
 -- Product 2: Siliconen Slabber
 (
@@ -61,7 +61,7 @@ INSERT INTO public.products (id, name, slug, description, short_description, pri
   true,
   true,
   'Houten Herinneringskoffertje | Julies Art',
-  'Bestel een gepersonaliseerd houten herinneringskoffertje als kraamcadeau. Met naam, geboortedatum en icoon. Uniek en handgemaakt.'
+  'Bestel een gepersonaliseerd houten herinneringskoffertje als kraamcadeau. Met naam, geboortedatum en icoon. Uniek en persoonlijk.'
 ),
 -- Product 4: Set tandendoosje + slabber
 (
