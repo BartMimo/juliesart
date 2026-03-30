@@ -1,12 +1,9 @@
 import { Metadata } from 'next'
-import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
-import { ProductCard } from '@/components/store/product-card'
 import { ProductGrid } from '@/components/store/product-grid'
-import { Winkel2Hero } from '@/components/store/winkel2-client'
+import { Winkel2Hero, MobileSort } from '@/components/store/winkel2-client'
 import Link from 'next/link'
 import { cn } from '@/lib/utils'
-import { SlidersHorizontal } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'Winkel — Julies Art',
@@ -202,25 +199,11 @@ export default async function Winkel2Page({ searchParams }: WinkelPageProps) {
                 {activeCat && <span className="text-neutral-400"> in {activeCat.name}</span>}
               </p>
 
-              {/* Mobile sort */}
-              <div className="lg:hidden flex items-center gap-2 bg-white rounded-xl px-3 py-2 shadow-soft">
-                <SlidersHorizontal className="h-3.5 w-3.5 text-neutral-400" />
-                <select
-                  defaultValue={sorteren ?? 'nieuwst'}
-                  onChange={(e) => {
-                    const params = new URLSearchParams()
-                    if (categorie) params.set('categorie', categorie)
-                    if (zoeken) params.set('zoeken', zoeken)
-                    if (e.target.value !== 'nieuwst') params.set('sorteren', e.target.value)
-                    window.location.href = `/winkel2?${params.toString()}`
-                  }}
-                  className="text-sm font-semibold text-neutral-700 bg-transparent border-none outline-none cursor-pointer"
-                >
-                  {sortOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value}>{opt.label}</option>
-                  ))}
-                </select>
-              </div>
+              <MobileSort
+                sorteren={sorteren ?? 'nieuwst'}
+                categorie={categorie}
+                zoeken={zoeken}
+              />
             </div>
 
             {/* Grid */}

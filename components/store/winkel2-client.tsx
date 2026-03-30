@@ -1,9 +1,46 @@
 'use client'
 
-import { useRouter, useSearchParams } from 'next/navigation'
 import { useState, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Search, X, SlidersHorizontal } from 'lucide-react'
+
+const sortOptions = [
+  { value: 'nieuwst', label: 'Nieuwst' },
+  { value: 'prijs-laag', label: 'Prijs: laag → hoog' },
+  { value: 'prijs-hoog', label: 'Prijs: hoog → laag' },
+  { value: 'naam', label: 'Naam A–Z' },
+]
+
+interface MobileSortProps {
+  sorteren: string
+  categorie?: string
+  zoeken?: string
+}
+
+export function MobileSort({ sorteren, categorie, zoeken }: MobileSortProps) {
+  const handleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const params = new URLSearchParams()
+    if (categorie) params.set('categorie', categorie)
+    if (zoeken) params.set('zoeken', zoeken)
+    if (e.target.value !== 'nieuwst') params.set('sorteren', e.target.value)
+    window.location.href = `/winkel2?${params.toString()}`
+  }
+
+  return (
+    <div className="lg:hidden flex items-center gap-2 bg-white rounded-xl px-3 py-2 shadow-soft">
+      <SlidersHorizontal className="h-3.5 w-3.5 text-neutral-400" />
+      <select
+        defaultValue={sorteren}
+        onChange={handleChange}
+        className="text-sm font-semibold text-neutral-700 bg-transparent border-none outline-none cursor-pointer"
+      >
+        {sortOptions.map((opt) => (
+          <option key={opt.value} value={opt.value}>{opt.label}</option>
+        ))}
+      </select>
+    </div>
+  )
+}
 
 interface Winkel2HeroProps {
   title: string
