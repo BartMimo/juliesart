@@ -66,7 +66,37 @@ export function PersonalizationBuilder({ productId, fields, onFieldsChange }: Pe
 
     if (error) {
       toast.error('Opslaan mislukt', error.message)
-      // Revert: reload from DB by refreshing fields (simplified: just notify)
+      return
+    }
+
+    // Auto-create 3 default font options when type is switched to 'font' and no options exist yet
+    if (updates.type === 'font') {
+      const field = fields.find(f => f.id === fieldId)
+      const hasOptions = (field?.options ?? []).filter(o => o.is_active).length > 0
+      if (!hasOptions) {
+        const defaults = [
+          { label: 'Quicksand',  value: 'quicksand',  font_preview: "'Quicksand', sans-serif",  sort_order: 0 },
+          { label: 'Great Vibes', value: 'greatvibes', font_preview: "'Great Vibes', cursive",   sort_order: 1 },
+          { label: 'Pacifico',   value: 'pacifico',   font_preview: "'Pacifico', cursive",       sort_order: 2 },
+        ]
+
+        const { data: inserted, error: optErr } = await supabase
+          .from('personalization_options')
+          .insert(defaults.map(d => ({ ...d, field_id: fieldId })))
+          .select()
+
+        if (optErr) {
+          toast.error('Standaard lettertypes toevoegen mislukt', optErr.message)
+        } else if (inserted) {
+          onFieldsChange(
+            fields.map(f => f.id === fieldId
+              ? { ...f, ...updates, options: [...(f.options ?? []), ...inserted] }
+              : f
+            )
+          )
+          toast.success('3 standaard lettertypes toegevoegd')
+        }
+      }
     }
   }
 
