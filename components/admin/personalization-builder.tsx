@@ -125,25 +125,20 @@ export function PersonalizationBuilder({ productId, fields, onFieldsChange }: Pe
     if (direction === 'up' && idx === 0) return
     if (direction === 'down' && idx === sorted.length - 1) return
 
+    // Reorder the array, then assign sequential sort_orders 0,1,2…
+    const reordered = [...sorted]
     const swapIdx = direction === 'up' ? idx - 1 : idx + 1
-    const a = sorted[idx]
-    const b = sorted[swapIdx]
+    ;[reordered[idx], reordered[swapIdx]] = [reordered[swapIdx], reordered[idx]]
 
-    // Swap sort_orders optimistically
-    onFieldsChange(fields.map(f => {
-      if (f.id === a.id) return { ...f, sort_order: b.sort_order }
-      if (f.id === b.id) return { ...f, sort_order: a.sort_order }
-      return f
-    }))
+    const withNewOrder = reordered.map((f, i) => ({ ...f, sort_order: i }))
+    onFieldsChange(withNewOrder)
 
-    const [r1, r2] = await Promise.all([
-      supabase.from('personalization_fields').update({ sort_order: b.sort_order }).eq('id', a.id),
-      supabase.from('personalization_fields').update({ sort_order: a.sort_order }).eq('id', b.id),
-    ])
-
-    if (r1.error || r2.error) {
-      toast.error('Volgorde opslaan mislukt')
-    }
+    const updates = withNewOrder.map(f =>
+      supabase.from('personalization_fields').update({ sort_order: f.sort_order }).eq('id', f.id)
+    )
+    const results = await Promise.all(updates)
+    const failed = results.find(r => r.error)
+    if (failed?.error) toast.error('Volgorde opslaan mislukt', failed.error.message)
   }
 
   // ── Add option ─────────────────────────────────────────────────────────────
@@ -220,30 +215,21 @@ export function PersonalizationBuilder({ productId, fields, onFieldsChange }: Pe
     if (direction === 'up' && idx === 0) return
     if (direction === 'down' && idx === sortedOpts.length - 1) return
 
+    // Reorder the array, then assign sequential sort_orders 0,1,2…
     const swapIdx = direction === 'up' ? idx - 1 : idx + 1
-    const a = sortedOpts[idx]
-    const b = sortedOpts[swapIdx]
+    ;[sortedOpts[idx], sortedOpts[swapIdx]] = [sortedOpts[swapIdx], sortedOpts[idx]]
+    const withNewOrder = sortedOpts.map((o, i) => ({ ...o, sort_order: i }))
 
-    onFieldsChange(fields.map(f => {
-      if (f.id !== fieldId) return f
-      return {
-        ...f,
-        options: (f.options ?? []).map(o => {
-          if (o.id === a.id) return { ...o, sort_order: b.sort_order }
-          if (o.id === b.id) return { ...o, sort_order: a.sort_order }
-          return o
-        }),
-      }
-    }))
+    onFieldsChange(fields.map(f =>
+      f.id === fieldId ? { ...f, options: withNewOrder } : f
+    ))
 
-    const [r1, r2] = await Promise.all([
-      supabase.from('personalization_options').update({ sort_order: b.sort_order }).eq('id', a.id),
-      supabase.from('personalization_options').update({ sort_order: a.sort_order }).eq('id', b.id),
-    ])
-
-    if (r1.error || r2.error) {
-      toast.error('Volgorde opslaan mislukt')
-    }
+    const updates = withNewOrder.map(o =>
+      supabase.from('personalization_options').update({ sort_order: o.sort_order }).eq('id', o.id)
+    )
+    const results = await Promise.all(updates)
+    const failed = results.find(r => r.error)
+    if (failed?.error) toast.error('Volgorde opslaan mislukt', failed.error.message)
   }
 
   // ── Render ─────────────────────────────────────────────────────────────────
