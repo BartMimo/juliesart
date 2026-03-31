@@ -156,7 +156,7 @@ export default function ProductPage() {
           {product.category && (
             <>
               <span className="shrink-0">/</span>
-              <a href={`/winkel/${product.category.slug}`} className="hover:text-brand-500 transition-colors shrink-0">
+              <a href={`/winkel?categorie=${product.category.slug}`} className="hover:text-brand-500 transition-colors shrink-0">
                 {product.category.name}
               </a>
             </>
