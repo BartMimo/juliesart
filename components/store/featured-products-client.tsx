@@ -19,9 +19,9 @@ export function FeaturedProductsClient({
   products,
 }: FeaturedProductsClientProps) {
   return (
-    <section className="bg-cream py-20">
+    <section className="bg-cream py-14">
       <div className="container-brand">
-        <SectionReveal className="mb-12 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
+        <SectionReveal className="mb-8 flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-end">
           <div>
             <p className="mb-2 text-sm font-bold uppercase tracking-wider text-brand-500">
               Onze favorieten

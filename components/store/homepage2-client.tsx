@@ -46,7 +46,7 @@ export function HomepageHero2() {
               className="inline-flex items-center gap-2 bg-white border border-brand-200 text-brand-700 text-sm font-semibold px-4 py-2 rounded-full shadow-soft mb-6"
             >
               <Sparkles className="h-4 w-4 text-brand-500" />
-              Gepersonaliseerd in Nederland ✦ Gratis verzending v/a €50
+              Gratis verzending v/a €50
             </motion.div>
 
             {/* Headline */}
@@ -246,9 +246,9 @@ const steps = [
 
 export function HowItWorks2() {
   return (
-    <section id="hoe-werkt-het" className="py-24 bg-white">
+    <section id="hoe-werkt-het" className="py-14 bg-white">
       <div className="container-brand">
-        <SectionReveal className="text-center mb-16">
+        <SectionReveal className="text-center mb-10">
           <p className="text-sm font-bold text-brand-500 uppercase tracking-wider mb-3">
             Zo eenvoudig
           </p>
@@ -333,9 +333,9 @@ const testimonials = [
 
 export function Testimonials2() {
   return (
-    <section className="py-24 bg-brand-50">
+    <section className="py-14 bg-brand-50">
       <div className="container-brand">
-        <SectionReveal className="text-center mb-14">
+        <SectionReveal className="text-center mb-10">
           <p className="text-sm font-bold text-brand-500 uppercase tracking-wider mb-3">
             Wat anderen zeggen
           </p>
@@ -405,9 +405,9 @@ export function Testimonials2() {
 // ─────────────────────────────────────────────────────
 export function BrandStory2() {
   return (
-    <section className="py-24 bg-white">
+    <section className="py-14 bg-white">
       <div className="container-brand">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
 
           {/* Visual */}
           <SectionReveal direction="right">
@@ -501,7 +501,7 @@ export function BrandStory2() {
 export function InstagramSection2() {
   return (
     <SectionReveal>
-      <section className="py-20 bg-gradient-to-r from-brand-50 via-cream to-peach-50">
+      <section className="py-12 bg-gradient-to-r from-brand-50 via-cream to-peach-50">
         <div className="container-brand">
           <div className="max-w-xl mx-auto text-center">
             <div className="w-16 h-16 rounded-2xl bg-white shadow-soft border border-brand-100 flex items-center justify-center mx-auto mb-5">
@@ -539,7 +539,7 @@ export function InstagramSection2() {
 export function FinalCta2() {
   return (
     <SectionReveal>
-      <section className="relative overflow-hidden bg-brand-700 py-24">
+      <section className="relative overflow-hidden bg-brand-700 py-14">
         {/* Decorative blobs */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
           <div className="absolute -top-20 -right-20 w-72 h-72 bg-brand-600/50 rounded-full blur-3xl" />
