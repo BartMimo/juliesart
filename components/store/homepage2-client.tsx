@@ -25,7 +25,7 @@ import { cn } from '@/lib/utils'
 // ─────────────────────────────────────────────────────
 export function HomepageHero2() {
   return (
-    <section className="relative overflow-hidden bg-hero-gradient min-h-[88vh] flex items-center">
+    <section className="relative overflow-hidden bg-hero-gradient min-h-[72vh] flex items-center">
       {/* Background blobs */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute -top-40 -right-40 w-[600px] h-[600px] bg-brand-200/20 rounded-full blur-3xl" />
@@ -33,7 +33,7 @@ export function HomepageHero2() {
         <div className="absolute top-1/3 left-1/3 w-96 h-96 bg-lavender-100/15 rounded-full blur-3xl" />
       </div>
 
-      <div className="container-brand relative z-10 py-16 sm:py-20">
+      <div className="container-brand relative z-10 py-10 sm:py-14">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
 
           {/* ── Left: Content ── */}
