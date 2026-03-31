@@ -68,7 +68,7 @@ export function HomepageHero2() {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="text-lg text-neutral-500 mb-8 leading-relaxed max-w-lg"
             >
-              Gemaakt van hout, op naam van jouw kind.
+              Gemaakt van hout, de naam van jouw kind.
               Een blijvend aandenken dat jaar na jaar vertelt hoe geliefd het is.
             </motion.p>
 
