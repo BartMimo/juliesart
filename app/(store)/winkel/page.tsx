@@ -39,7 +39,14 @@ export default async function Winkel2Page({ searchParams }: WinkelPageProps) {
 
   if (categorie) {
     const cat = categories.find(c => c.slug === categorie)
-    if (cat) query = query.eq('category_id', cat.id)
+    if (cat) {
+      const { data: pc } = await supabase
+        .from('product_categories')
+        .select('product_id')
+        .eq('category_id', cat.id)
+      const ids = (pc ?? []).map((r: { product_id: string }) => r.product_id)
+      query = ids.length > 0 ? query.in('id', ids) : query.eq('id', 'none')
+    }
   }
 
   switch (sorteren) {

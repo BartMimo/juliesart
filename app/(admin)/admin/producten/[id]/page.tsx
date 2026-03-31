@@ -25,7 +25,6 @@ const schema = z.object({
   description: z.string().optional(),
   price: z.coerce.number().min(0.01, 'Prijs moet groter zijn dan 0'),
   compare_at_price: z.coerce.number().min(0).optional().nullable(),
-  category_id: z.string().optional().nullable(),
   is_active: z.boolean(),
   is_featured: z.boolean(),
   meta_title: z.string().optional(),
@@ -45,6 +44,7 @@ export default function ProductEditPage() {
   const [images, setImages] = useState<ProductImage[]>([])
   const [personalizationFields, setPersonalizationFields] = useState<PersonalizationField[]>([])
   const [categories, setCategories] = useState<Category[]>([])
+  const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([])
   const supabase = createClient()
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>({
@@ -66,6 +66,17 @@ export default function ProductEditPage() {
       // Load categories
       const { data: cats } = await supabase.from('categories').select('*').eq('is_active', true).order('sort_order')
       setCategories(cats ?? [])
+
+      // Load selected categories from junction table (for existing products)
+      if (!isNew) {
+        const { data: pc } = await supabase
+          .from('product_categories')
+          .select('category_id')
+          .eq('product_id', params.id)
+        if (pc && pc.length > 0) {
+          setSelectedCategoryIds(pc.map((r: { category_id: string }) => r.category_id))
+        }
+      }
 
       if (!isNew) {
         const { data: p } = await supabase
@@ -90,7 +101,6 @@ export default function ProductEditPage() {
           setValue('description', p.description ?? '')
           setValue('price', p.price)
           setValue('compare_at_price', p.compare_at_price ?? null)
-          setValue('category_id', p.category_id ?? null)
           setValue('is_active', p.is_active)
           setValue('is_featured', p.is_featured)
           setValue('meta_title', p.meta_title ?? '')
@@ -108,8 +118,11 @@ export default function ProductEditPage() {
     const payload = {
       ...data,
       compare_at_price: data.compare_at_price || null,
-      category_id: data.category_id || null,
+      // Primary category = first selected (for backwards compat with breadcrumbs/display)
+      category_id: selectedCategoryIds[0] ?? null,
     }
+
+    let savedProductId = params.id as string
 
     if (isNew) {
       const { data: created, error } = await supabase
@@ -120,21 +133,36 @@ export default function ProductEditPage() {
 
       if (error) {
         toast.error('Kon product niet opslaan', error.message)
-      } else {
-        toast.success('Product aangemaakt!')
-        router.push(`/admin/producten/${created.id}`)
+        setSaving(false)
+        return
       }
+      savedProductId = created.id
+      toast.success('Product aangemaakt!')
     } else {
       const { error } = await supabase
         .from('products')
         .update(payload)
-        .eq('id', params.id as string)
+        .eq('id', savedProductId)
 
       if (error) {
         toast.error('Kon product niet opslaan', error.message)
-      } else {
-        toast.success('Product opgeslagen!')
+        setSaving(false)
+        return
       }
+    }
+
+    // Sync junction table: delete all then re-insert selected
+    await supabase.from('product_categories').delete().eq('product_id', savedProductId)
+    if (selectedCategoryIds.length > 0) {
+      await supabase.from('product_categories').insert(
+        selectedCategoryIds.map(catId => ({ product_id: savedProductId, category_id: catId }))
+      )
+    }
+
+    if (isNew) {
+      router.push(`/admin/producten/${savedProductId}`)
+    } else {
+      toast.success('Product opgeslagen!')
     }
 
     setSaving(false)
@@ -302,16 +330,35 @@ export default function ProductEditPage() {
             <h2 className="font-bold text-neutral-800">Organisatie</h2>
 
             <div>
-              <label className="block text-sm font-semibold text-neutral-700 mb-1.5">Categorie</label>
-              <select
-                className="w-full px-4 py-3 rounded-xl border border-neutral-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-400"
-                {...register('category_id')}
-              >
-                <option value="">— Geen categorie —</option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>{cat.name}</option>
-                ))}
-              </select>
+              <label className="block text-sm font-semibold text-neutral-700 mb-2">Categorieën</label>
+              {categories.length === 0 ? (
+                <p className="text-xs text-neutral-400">Geen categorieën gevonden.</p>
+              ) : (
+                <div className="space-y-2">
+                  {categories.map((cat) => (
+                    <label key={cat.id} className="flex items-center gap-3 cursor-pointer group">
+                      <input
+                        type="checkbox"
+                        checked={selectedCategoryIds.includes(cat.id)}
+                        onChange={e => {
+                          setSelectedCategoryIds(prev =>
+                            e.target.checked
+                              ? [...prev, cat.id]
+                              : prev.filter(id => id !== cat.id)
+                          )
+                        }}
+                        className="w-4 h-4 accent-brand-500 rounded shrink-0"
+                      />
+                      <span className="text-sm text-neutral-700 group-hover:text-neutral-900">{cat.name}</span>
+                    </label>
+                  ))}
+                </div>
+              )}
+              {selectedCategoryIds.length > 1 && (
+                <p className="text-xs text-neutral-400 mt-2">
+                  Eerste aangevinkte categorie wordt als primaire weergegeven.
+                </p>
+              )}
             </div>
 
             <div className="space-y-3">

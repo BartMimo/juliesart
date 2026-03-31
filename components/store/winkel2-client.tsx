@@ -220,7 +220,7 @@ function PremiumProductCard({ product, index }: { product: Product; index: numbe
     >
       <Link href={`/product/${product.slug}`} className="group block">
         {/* Image container */}
-        <div className="relative overflow-hidden rounded-2xl mb-4 bg-gradient-to-br from-brand-50 to-peach-50" style={{ aspectRatio: '4/5' }}>
+        <div className="relative overflow-hidden rounded-2xl mb-4 bg-gradient-to-br from-brand-50 to-peach-50" style={{ aspectRatio: '1/1' }}>
           {primaryImage ? (
             <Image
               src={primaryImage.url}
