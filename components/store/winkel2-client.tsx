@@ -274,11 +274,6 @@ function PremiumProductCard({ product, index }: { product: Product; index: numbe
 
         {/* Product info */}
         <div className="px-1">
-          {product.category && (
-            <p className="text-[11px] font-black text-brand-400 uppercase tracking-widest mb-1">
-              {product.category.name}
-            </p>
-          )}
           <h3 className="font-bold text-neutral-800 text-sm leading-snug mb-2 group-hover:text-brand-600 transition-colors line-clamp-2">
             {product.name}
           </h3>

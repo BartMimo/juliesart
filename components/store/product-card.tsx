@@ -69,11 +69,6 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
 
         {/* Info */}
         <div className="p-4">
-          {product.category && (
-            <p className="text-xs font-semibold text-brand-400 uppercase tracking-wider mb-1">
-              {product.category.name}
-            </p>
-          )}
           <h3 className="font-bold text-neutral-800 text-sm leading-snug mb-2 line-clamp-2 group-hover:text-brand-600 transition-colors">
             {product.name}
           </h3>
