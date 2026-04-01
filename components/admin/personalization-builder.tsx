@@ -111,6 +111,52 @@ export function PersonalizationBuilder({ productId, fields, onFieldsChange }: Pe
         onFieldsChange(fields.map(f => f.id === fieldId ? { ...f, ...updates, ...metaUpdates } : f))
       }
     }
+
+    // Auto-fill metadata and options when type is switched to 'icon'
+    if (updates.type === 'icon') {
+      const field = fields.find(f => f.id === fieldId)
+
+      const metaUpdates: Partial<PersonalizationField> = {}
+      if (field?.key?.startsWith('veld_')) metaUpdates.key = 'icoon'
+      if (field?.label === 'Nieuw veld') {
+        metaUpdates.label = 'Icoon'
+        metaUpdates.help_text = 'Kies het logo dat op het product wordt gegraveerd.'
+      }
+      if (Object.keys(metaUpdates).length > 0) {
+        await supabase.from('personalization_fields').update(metaUpdates).eq('id', fieldId)
+      }
+
+      const hasOptions = (field?.options ?? []).filter(o => o.is_active).length > 0
+      if (!hasOptions) {
+        const defaults = [
+          { label: 'Hartje',     value: 'hartje' },
+          { label: 'Bloemetje',  value: 'bloemetje' },
+          { label: 'Dinosaurus', value: 'dinosaurus' },
+          { label: 'Aapje',     value: 'aapje' },
+          { label: 'Beertje',   value: 'beertje' },
+          { label: 'Traktor',   value: 'traktor' },
+        ]
+
+        const { data: inserted, error: optErr } = await supabase
+          .from('personalization_options')
+          .insert(defaults.map((d, i) => ({ ...d, field_id: fieldId, sort_order: i })))
+          .select()
+
+        if (optErr) {
+          toast.error('Standaard iconen toevoegen mislukt', optErr.message)
+        } else if (inserted) {
+          onFieldsChange(
+            fields.map(f => f.id === fieldId
+              ? { ...f, ...updates, ...metaUpdates, options: [...(f.options ?? []), ...inserted] }
+              : f
+            )
+          )
+          toast.success('Standaard iconen toegevoegd')
+        }
+      } else if (Object.keys(metaUpdates).length > 0) {
+        onFieldsChange(fields.map(f => f.id === fieldId ? { ...f, ...updates, ...metaUpdates } : f))
+      }
+    }
   }
 
   // ── Delete field ───────────────────────────────────────────────────────────
