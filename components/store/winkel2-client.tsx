@@ -239,6 +239,18 @@ function PremiumProductCard({ product, index }: { product: Product; index: numbe
           {/* Overlay on hover */}
           <div className="absolute inset-0 bg-brand-900/0 group-hover:bg-brand-900/20 transition-all duration-500" />
 
+          {/* Sold out overlay */}
+          {product.is_sold_out && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50">
+              <span
+                className="text-2xl font-extrabold text-neutral-700/70 tracking-widest uppercase rotate-[-20deg] select-none"
+                style={{ textShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
+              >
+                Uitverkocht
+              </span>
+            </div>
+          )}
+
           {/* CTA on hover */}
           <div className="absolute inset-x-4 bottom-4 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
             <div className="bg-white rounded-xl px-4 py-3 flex items-center justify-between shadow-hover">

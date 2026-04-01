@@ -244,27 +244,33 @@ export default function ProductPage() {
               </div>
 
               {/* Add to cart */}
-              <motion.div whileTap={{ scale: 0.98 }}>
-                <Button
-                  size="xl"
-                  className="w-full"
-                  onClick={handleAddToCart}
-                  loading={addingToCart}
-                  disabled={addedFeedback}
-                >
-                  {addedFeedback ? (
-                    <>
-                      <Check className="h-5 w-5" />
-                      Toegevoegd!
-                    </>
-                  ) : (
-                    <>
-                      <ShoppingBag className="h-5 w-5" />
-                      In winkelwagen — {formatPrice(product.price * quantity)}
-                    </>
-                  )}
-                </Button>
-              </motion.div>
+              {product.is_sold_out ? (
+                <div className="w-full py-4 px-6 rounded-2xl bg-neutral-100 border-2 border-neutral-200 flex items-center justify-center gap-3">
+                  <span className="text-lg font-extrabold text-neutral-400 tracking-widest uppercase">Uitverkocht</span>
+                </div>
+              ) : (
+                <motion.div whileTap={{ scale: 0.98 }}>
+                  <Button
+                    size="xl"
+                    className="w-full"
+                    onClick={handleAddToCart}
+                    loading={addingToCart}
+                    disabled={addedFeedback}
+                  >
+                    {addedFeedback ? (
+                      <>
+                        <Check className="h-5 w-5" />
+                        Toegevoegd!
+                      </>
+                    ) : (
+                      <>
+                        <ShoppingBag className="h-5 w-5" />
+                        In winkelwagen — {formatPrice(product.price * quantity)}
+                      </>
+                    )}
+                  </Button>
+                </motion.div>
+              )}
 
               {/* Personalisation notice */}
               {hasPersonalization && (
