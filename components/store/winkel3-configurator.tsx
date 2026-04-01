@@ -9,7 +9,7 @@ import {
 } from 'lucide-react'
 import { Product, PersonalizationField, PersonalizationFieldType, PersonalizationOption } from '@/types'
 import { cn, formatPrice } from '@/lib/utils'
-import { FONTS } from '@/lib/fonts'
+import { FONTS, getFontPreviewStyle } from '@/lib/fonts'
 
 // ─── Fallback option sets ─────────────────────────────────────────────────────
 
@@ -534,7 +534,7 @@ function FieldCompletedSummary({
     const ff = option?.font_preview ?? fontFamily
     return (
       <div className="flex items-center gap-2.5">
-        <span className="text-lg text-brand-600" style={{ fontFamily: ff ?? 'inherit' }}>
+        <span className="text-lg text-brand-600" style={getFontPreviewStyle(ff)}>
           {nameValue || displayLabel}
         </span>
         <span className="text-xs text-neutral-400">({displayLabel})</span>
@@ -689,7 +689,7 @@ function FontStep({
               >
                 <span
                   className="text-2xl sm:text-3xl text-brand-700 text-center leading-tight truncate max-w-full"
-                  style={{ fontFamily: opt.font_preview ?? 'inherit' }}
+                  style={getFontPreviewStyle(opt.font_preview)}
                 >
                   {namePreview}
                 </span>
@@ -1102,7 +1102,7 @@ function PreviewPanel({
                     />
                   )}
                   {f.type === 'font' && option?.font_preview ? (
-                    <span className="font-semibold text-neutral-700 text-sm" style={{ fontFamily: option.font_preview }}>
+                    <span className="font-semibold text-neutral-700 text-sm" style={getFontPreviewStyle(option.font_preview)}>
                       {nameValue || display}
                     </span>
                   ) : (

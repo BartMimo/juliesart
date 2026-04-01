@@ -6,7 +6,7 @@ import { HelpCircle, Check } from 'lucide-react'
 import { PersonalizationField, PersonalizationValues, PersonalizationOption } from '@/types'
 import { Input } from '@/components/ui/input'
 import { cn, getFieldTypeLabel } from '@/lib/utils'
-import { FONTS } from '@/lib/fonts'
+import { FONTS, getFontPreviewStyle } from '@/lib/fonts'
 
 // ─── Fallback fonts (used when a font field has no options configured) ────────
 
@@ -124,7 +124,7 @@ export function PersonalizationForm({
                     />
                   )}
                   {field.type === 'font' && option?.font_preview ? (
-                    <span style={{ fontFamily: option.font_preview }} className="text-base text-brand-600">
+                    <span style={getFontPreviewStyle(option.font_preview)} className="text-base text-brand-600">
                       {namePreview || displayVal}
                     </span>
                   ) : (
@@ -379,7 +379,7 @@ function FontField({
                       'text-xl leading-none text-center truncate max-w-full transition-colors',
                       isSelected ? 'text-brand-600' : 'text-neutral-700 group-hover:text-neutral-900'
                     )}
-                    style={{ fontFamily: option.font_preview ?? 'inherit' }}
+                    style={getFontPreviewStyle(option.font_preview)}
                   >
                     {namePreview}
                   </span>

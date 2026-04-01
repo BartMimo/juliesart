@@ -1,3 +1,5 @@
+import type { CSSProperties } from 'react'
+
 // ─── Centrale fontconfiguratie ───────────────────────────────────────────────
 //
 // Dit is de ENIGE plek waar je lettertypes hoeft toe te voegen.
@@ -29,6 +31,7 @@ export interface FontConfig {
   family: string            // CSS font-family waarde
   weights?: string          // optioneel: gewichten, bijv. '400;700' (standaard: alleen regulier)
   skipGoogleLoad?: boolean  // true als het lettertype al op een andere manier geladen wordt
+  isSingleLine?: boolean    // true voor single-line fonts (plotter/laser) — voegt stroke toe in preview
 }
 
 export const FONTS: FontConfig[] = [
@@ -84,8 +87,20 @@ export const FONTS: FontConfig[] = [
     label: 'Lijn',
     family: "'Hoarsely Single Line', cursive",
     skipGoogleLoad: true,
+    isSingleLine: true,
   },
 ]
+
+// Geeft de juiste inline style terug voor een font preview.
+// Single-line fonts krijgen automatisch een stroke zodat ze zichtbaar zijn.
+export function getFontPreviewStyle(fontFamily: string | null | undefined): CSSProperties {
+  const family = fontFamily ?? 'inherit'
+  const font = FONTS.find(f => f.family === fontFamily)
+  if (font?.isSingleLine) {
+    return { fontFamily: family, WebkitTextStroke: '1px currentColor' }
+  }
+  return { fontFamily: family }
+}
 
 // Bouwt de Google Fonts URL automatisch op uit de fontnamen
 export function buildGoogleFontsUrl(): string {
