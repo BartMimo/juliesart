@@ -27,6 +27,7 @@ const schema = z.object({
   compare_at_price: z.coerce.number().min(0).optional().nullable(),
   is_active: z.boolean(),
   is_featured: z.boolean(),
+  is_sold_out: z.boolean(),
   meta_title: z.string().optional(),
   meta_description: z.string().optional(),
 })
@@ -49,7 +50,7 @@ export default function ProductEditPage() {
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { is_active: true, is_featured: false },
+    defaultValues: { is_active: true, is_featured: false, is_sold_out: false },
   })
 
   const nameValue = watch('name')
@@ -103,6 +104,7 @@ export default function ProductEditPage() {
           setValue('compare_at_price', p.compare_at_price ?? null)
           setValue('is_active', p.is_active)
           setValue('is_featured', p.is_featured)
+          setValue('is_sold_out', p.is_sold_out)
           setValue('meta_title', p.meta_title ?? '')
           setValue('meta_description', p.meta_description ?? '')
         }
@@ -374,6 +376,13 @@ export default function ProductEditPage() {
                 <div>
                   <span className="text-sm font-semibold text-neutral-700">Uitgelicht</span>
                   <p className="text-xs text-neutral-400">Getoond op de homepage</p>
+                </div>
+              </label>
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input type="checkbox" className="w-4 h-4 accent-brand-500" {...register('is_sold_out')} />
+                <div>
+                  <span className="text-sm font-semibold text-neutral-700">Uitverkocht</span>
+                  <p className="text-xs text-neutral-400">Toont uitverkocht-overlay op het product</p>
                 </div>
               </label>
             </div>

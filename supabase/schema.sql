@@ -99,6 +99,7 @@ CREATE TABLE public.products (
   category_id         UUID REFERENCES public.categories(id) ON DELETE SET NULL,
   is_active           BOOLEAN NOT NULL DEFAULT true,
   is_featured         BOOLEAN NOT NULL DEFAULT false,
+  is_sold_out         BOOLEAN NOT NULL DEFAULT false,
   stock_quantity      INT,
   track_inventory     BOOLEAN NOT NULL DEFAULT false,
   -- SEO

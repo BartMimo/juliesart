@@ -29,6 +29,17 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
       <Link href={`/product/${product.slug}`} className="group block bg-white rounded-2xl border border-neutral-100 overflow-hidden shadow-sm hover:shadow-hover hover:border-brand-100 transition-all duration-300">
         {/* Image */}
         <div className="relative overflow-hidden aspect-square bg-gradient-to-br from-brand-50 to-peach-50">
+          {/* Sold out overlay */}
+          {product.is_sold_out && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50">
+              <span
+                className="text-2xl font-extrabold text-neutral-700/70 tracking-widest uppercase rotate-[-20deg] select-none"
+                style={{ textShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
+              >
+                Uitverkocht
+              </span>
+            </div>
+          )}
           {primaryImage ? (
             <Image
               src={primaryImage.url}

@@ -1,0 +1,2 @@
+ALTER TABLE public.products
+  ADD COLUMN IF NOT EXISTS is_sold_out BOOLEAN NOT NULL DEFAULT false;
