@@ -70,13 +70,25 @@ export function PersonalizationBuilder({ productId, fields, onFieldsChange }: Pe
       return
     }
 
-    // Auto-create 3 default font options when type is switched to 'font' and no options exist yet
+    // Auto-fill metadata and options when type is switched to 'font'
     if (updates.type === 'font') {
       const field = fields.find(f => f.id === fieldId)
+
+      // Pre-fill field metadata if still at generated defaults
+      const metaUpdates: Partial<PersonalizationField> = {}
+      if (field?.key?.startsWith('veld_')) metaUpdates.key = 'lettertype'
+      if (field?.label === 'Nieuw veld') {
+        metaUpdates.label = 'Lettertype'
+        metaUpdates.help_text = 'Kies het lettertype voor de naam op het doosje.'
+      }
+      if (Object.keys(metaUpdates).length > 0) {
+        await supabase.from('personalization_fields').update(metaUpdates).eq('id', fieldId)
+      }
+
       const hasOptions = (field?.options ?? []).filter(o => o.is_active).length > 0
       if (!hasOptions) {
         const defaults = FONTS.map((f, i) => ({
-          label: f.name, value: f.value, font_preview: f.family, sort_order: i,
+          label: f.label, value: f.value, font_preview: f.family, sort_order: i,
         }))
 
         const { data: inserted, error: optErr } = await supabase
@@ -89,12 +101,14 @@ export function PersonalizationBuilder({ productId, fields, onFieldsChange }: Pe
         } else if (inserted) {
           onFieldsChange(
             fields.map(f => f.id === fieldId
-              ? { ...f, ...updates, options: [...(f.options ?? []), ...inserted] }
+              ? { ...f, ...updates, ...metaUpdates, options: [...(f.options ?? []), ...inserted] }
               : f
             )
           )
-          toast.success('3 standaard lettertypes toegevoegd')
+          toast.success('Standaard lettertypes toegevoegd')
         }
+      } else if (Object.keys(metaUpdates).length > 0) {
+        onFieldsChange(fields.map(f => f.id === fieldId ? { ...f, ...updates, ...metaUpdates } : f))
       }
     }
   }
