@@ -33,6 +33,7 @@ const FALLBACK_FONTS = makeFallback([
   { value: 'caveat',     label: 'Caveat',       font_preview: "'Caveat', cursive" },
   { value: 'quicksand',  label: 'Quicksand',    font_preview: "'Quicksand', sans-serif" },
   { value: 'nunito',     label: 'Nunito',       font_preview: "'Nunito', sans-serif" },
+  { value: 'amaticsc',   label: 'Amatic SC',    font_preview: "'Amatic SC', cursive" },
 ])
 
 const FALLBACK_ICONS = makeFallback([

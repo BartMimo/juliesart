@@ -88,6 +88,7 @@ export const AVAILABLE_FONTS = [
   { name: 'Nunito', label: 'Modern' },
   { name: 'Caveat', label: 'Handgeschreven' },
   { name: 'Quicksand', label: 'Zacht' },
+  { name: 'Amatic SC', label: 'Krijt' },
 ] as const
 
 // Analytics event types

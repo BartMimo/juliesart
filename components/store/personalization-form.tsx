@@ -30,6 +30,7 @@ const FALLBACK_FONTS: PersonalizationOption[] = [
   makeFallbackOption({ value: 'caveat',     label: 'Caveat',             font_preview: "'Caveat', cursive",             sort_order: 2 }),
   makeFallbackOption({ value: 'quicksand',  label: 'Quicksand',          font_preview: "'Quicksand', sans-serif",       sort_order: 3 }),
   makeFallbackOption({ value: 'nunito',     label: 'Nunito',             font_preview: "'Nunito', sans-serif",          sort_order: 4 }),
+  makeFallbackOption({ value: 'amaticsc',   label: 'Amatic SC',          font_preview: "'Amatic SC', cursive",           sort_order: 5 }),
 ]
 
 // ─── Types ────────────────────────────────────────────────────────────────────
