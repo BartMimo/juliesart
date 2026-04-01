@@ -177,11 +177,6 @@ export default function ProductPage() {
           {/* Info + Form */}
           <SectionReveal direction="right">
             <div className="space-y-6">
-              {/* Category badge */}
-              {product.category && (
-                <Badge variant="lavender">{product.category.name}</Badge>
-              )}
-
               {/* Title */}
               <h1 className="heading-section text-3xl sm:text-4xl text-neutral-800">
                 {product.name}
