@@ -72,6 +72,12 @@ export const FONTS: FontConfig[] = [
     family: "'Amatic SC', cursive",
     weights: '400;700',
   },
+  {
+  value: 'Dancing S',
+  name: 'Dancing Script',      // ← exacte naam van fonts.google.com
+  label: 'Klassiek',
+  family: "'Dancing Script', cursive",
+},
 ]
 
 // Bouwt de Google Fonts URL automatisch op uit de fontnamen
