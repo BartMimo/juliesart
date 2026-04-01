@@ -87,9 +87,13 @@ export function PersonalizationBuilder({ productId, fields, onFieldsChange }: Pe
 
       const hasOptions = (field?.options ?? []).filter(o => o.is_active).length > 0
       if (!hasOptions) {
-        const defaults = FONTS.map((f, i) => ({
-          label: f.label, value: f.value, font_preview: f.family, sort_order: i,
-        }))
+        const defaultFontValues = ['pacifico', 'greatvibes', 'nunito', 'amaticsc', 'dancingscript']
+        const defaults = FONTS
+          .filter(f => defaultFontValues.includes(f.value))
+          .sort((a, b) => defaultFontValues.indexOf(a.value) - defaultFontValues.indexOf(b.value))
+          .map((f, i) => ({
+            label: f.label, value: f.value, font_preview: f.family, sort_order: i,
+          }))
 
         const { data: inserted, error: optErr } = await supabase
           .from('personalization_options')
