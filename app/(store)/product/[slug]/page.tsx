@@ -199,11 +199,6 @@ export default function ProductPage() {
                     {formatPrice(product.compare_at_price!)}
                   </span>
                 )}
-                {hasPersonalization && (
-                  <span className="text-sm text-neutral-500">
-                    (excl. eventuele opties)
-                  </span>
-                )}
               </div>
 
               {/* Personalization form */}
