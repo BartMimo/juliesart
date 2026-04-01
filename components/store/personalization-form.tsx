@@ -429,15 +429,13 @@ function IconField({ field, options, value, onChange, error }: FieldComponentPro
                 : 'border-neutral-200 hover:border-brand-300 bg-white'
             )}
           >
-            <div className="text-2xl mb-1">
-              {option.image_url ? (
+            {option.image_url && (
+              <div className="mb-1">
                 <img src={option.image_url} alt={option.label} className="w-8 h-8 mx-auto object-contain" />
-              ) : (
-                option.label.match(/[\p{Emoji}]/u)?.[0] ?? '✨'
-              )}
-            </div>
+              </div>
+            )}
             <div className="text-xs font-medium text-neutral-600 leading-tight">
-              {option.label.replace(/[\p{Emoji}]/gu, '').trim()}
+              {option.label}
             </div>
           </button>
         ))}
