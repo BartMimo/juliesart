@@ -87,7 +87,7 @@ export function PersonalizationBuilder({ productId, fields, onFieldsChange }: Pe
 
       const hasOptions = (field?.options ?? []).filter(o => o.is_active).length > 0
       if (!hasOptions) {
-        const defaultFontValues = ['pacifico', 'greatvibes', 'nunito', 'amaticsc', 'dancingscript']
+        const defaultFontValues = ['pacifico', 'greatvibes', 'nunito', 'amaticsc', 'dancingscript', 'craftygirls']
         const defaults = FONTS
           .filter(f => defaultFontValues.includes(f.value))
           .sort((a, b) => defaultFontValues.indexOf(a.value) - defaultFontValues.indexOf(b.value))

@@ -82,6 +82,12 @@ export const FONTS: FontConfig[] = [
     family: "'Dancing Script', cursive",
   },
   {
+    value: 'craftygirls',
+    name: 'Crafty Girls',
+    label: 'Lief',
+    family: "'Crafty Girls', cursive",
+  },
+  {
     value: 'hoarselysingleline',
     name: 'Hoarsely Single Line',
     label: 'Lijn',
