@@ -9,6 +9,7 @@ import {
 } from 'lucide-react'
 import { Product, PersonalizationField, PersonalizationFieldType, PersonalizationOption } from '@/types'
 import { cn, formatPrice } from '@/lib/utils'
+import { FONTS } from '@/lib/fonts'
 
 // ─── Fallback option sets ─────────────────────────────────────────────────────
 
@@ -27,14 +28,9 @@ function makeFallback(list: Partial<PersonalizationOption>[]): PersonalizationOp
   }))
 }
 
-const FALLBACK_FONTS = makeFallback([
-  { value: 'pacifico',   label: 'Pacifico',    font_preview: "'Pacifico', cursive" },
-  { value: 'greatvibes', label: 'Great Vibes',  font_preview: "'Great Vibes', cursive" },
-  { value: 'caveat',     label: 'Caveat',       font_preview: "'Caveat', cursive" },
-  { value: 'quicksand',  label: 'Quicksand',    font_preview: "'Quicksand', sans-serif" },
-  { value: 'nunito',     label: 'Nunito',       font_preview: "'Nunito', sans-serif" },
-  { value: 'amaticsc',   label: 'Amatic SC',    font_preview: "'Amatic SC', cursive" },
-])
+const FALLBACK_FONTS = makeFallback(
+  FONTS.map(f => ({ value: f.value, label: f.name, font_preview: f.family }))
+)
 
 const FALLBACK_ICONS = makeFallback([
   { value: 'ster',      label: '⭐ Ster' },

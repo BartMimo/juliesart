@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Nunito } from 'next/font/google'
 import './globals.css'
+import { buildGoogleFontsUrl } from '@/lib/fonts'
 import { SITE_NAME, SITE_DESCRIPTION, SITE_URL } from '@/lib/constants'
 import { Toaster } from '@/components/ui/toaster'
 
@@ -65,10 +66,7 @@ export default function RootLayout({
         {/* Google Fonts for personalization font previews */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Pacifico&family=Great+Vibes&family=Caveat:wght@400;600&family=Quicksand:wght@400;600&family=Amatic+SC:wght@400;700&display=swap"
-          rel="stylesheet"
-        />
+        <link href={buildGoogleFontsUrl()} rel="stylesheet" />
       </head>
       <body className="font-[family-name:var(--font-nunito)] antialiased">
         {children}

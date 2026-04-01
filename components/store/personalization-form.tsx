@@ -6,32 +6,22 @@ import { HelpCircle, Check } from 'lucide-react'
 import { PersonalizationField, PersonalizationValues, PersonalizationOption } from '@/types'
 import { Input } from '@/components/ui/input'
 import { cn, getFieldTypeLabel } from '@/lib/utils'
+import { FONTS } from '@/lib/fonts'
 
 // ─── Fallback fonts (used when a font field has no options configured) ────────
 
-function makeFallbackOption(overrides: Partial<PersonalizationOption>): PersonalizationOption {
-  return {
-    id: `fallback-${overrides.value}`,
-    field_id: '',
-    value: overrides.value ?? '',
-    label: overrides.label ?? '',
-    image_url: null,
-    color_hex: null,
-    font_preview: overrides.font_preview ?? null,
-    price_modifier: 0,
-    sort_order: overrides.sort_order ?? 0,
-    is_active: true,
-  }
-}
-
-const FALLBACK_FONTS: PersonalizationOption[] = [
-  makeFallbackOption({ value: 'pacifico',   label: 'Pacifico',           font_preview: "'Pacifico', cursive",          sort_order: 0 }),
-  makeFallbackOption({ value: 'greatvibes', label: 'Great Vibes',        font_preview: "'Great Vibes', cursive",        sort_order: 1 }),
-  makeFallbackOption({ value: 'caveat',     label: 'Caveat',             font_preview: "'Caveat', cursive",             sort_order: 2 }),
-  makeFallbackOption({ value: 'quicksand',  label: 'Quicksand',          font_preview: "'Quicksand', sans-serif",       sort_order: 3 }),
-  makeFallbackOption({ value: 'nunito',     label: 'Nunito',             font_preview: "'Nunito', sans-serif",          sort_order: 4 }),
-  makeFallbackOption({ value: 'amaticsc',   label: 'Amatic SC',          font_preview: "'Amatic SC', cursive",           sort_order: 5 }),
-]
+const FALLBACK_FONTS: PersonalizationOption[] = FONTS.map((f, i) => ({
+  id: `fallback-${f.value}`,
+  field_id: '',
+  value: f.value,
+  label: f.name,
+  image_url: null,
+  color_hex: null,
+  font_preview: f.family,
+  price_modifier: 0,
+  sort_order: i,
+  is_active: true,
+}))
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

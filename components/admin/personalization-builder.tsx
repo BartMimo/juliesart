@@ -5,6 +5,7 @@ import { Plus, Trash2, ChevronDown, ChevronUp, ArrowUp, ArrowDown } from 'lucide
 import { PersonalizationField, PersonalizationOption, PersonalizationFieldType } from '@/types'
 import { createClient } from '@/lib/supabase/client'
 import { FIELD_TYPES } from '@/lib/constants'
+import { FONTS } from '@/lib/fonts'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { useToast } from '@/components/ui/toaster'
@@ -74,11 +75,9 @@ export function PersonalizationBuilder({ productId, fields, onFieldsChange }: Pe
       const field = fields.find(f => f.id === fieldId)
       const hasOptions = (field?.options ?? []).filter(o => o.is_active).length > 0
       if (!hasOptions) {
-        const defaults = [
-          { label: 'Quicksand',  value: 'quicksand',  font_preview: "'Quicksand', sans-serif",  sort_order: 0 },
-          { label: 'Great Vibes', value: 'greatvibes', font_preview: "'Great Vibes', cursive",   sort_order: 1 },
-          { label: 'Pacifico',   value: 'pacifico',   font_preview: "'Pacifico', cursive",       sort_order: 2 },
-        ]
+        const defaults = FONTS.map((f, i) => ({
+          label: f.name, value: f.value, font_preview: f.family, sort_order: i,
+        }))
 
         const { data: inserted, error: optErr } = await supabase
           .from('personalization_options')

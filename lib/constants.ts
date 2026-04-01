@@ -81,15 +81,8 @@ export const FIELD_TYPES = [
   { value: 'size', label: 'Maat' },
 ] as const
 
-// Google Fonts available for font personalization options
-export const AVAILABLE_FONTS = [
-  { name: 'Pacifico', label: 'Speels' },
-  { name: 'Great Vibes', label: 'Sierlijk' },
-  { name: 'Nunito', label: 'Modern' },
-  { name: 'Caveat', label: 'Handgeschreven' },
-  { name: 'Quicksand', label: 'Zacht' },
-  { name: 'Amatic SC', label: 'Krijt' },
-] as const
+// Google Fonts available for font personalization options — afgeleid van lib/fonts.ts
+export { FONTS as AVAILABLE_FONTS } from '@/lib/fonts'
 
 // Analytics event types
 export const ANALYTICS_EVENTS = {
