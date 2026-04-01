@@ -73,11 +73,18 @@ export const FONTS: FontConfig[] = [
     weights: '400;700',
   },
   {
-  value: 'Dancing S',
-  name: 'Dancing Script',      // ← exacte naam van fonts.google.com
-  label: 'Klassiek',
-  family: "'Dancing Script', cursive",
-},
+    value: 'dancingscript',
+    name: 'Dancing Script',
+    label: 'Klassiek',
+    family: "'Dancing Script', cursive",
+  },
+  {
+    value: 'hoarselysingleline',
+    name: 'Hoarsely Single Line',
+    label: 'Lijn',
+    family: "'Hoarsely Single Line', cursive",
+    skipGoogleLoad: true,
+  },
 ]
 
 // Bouwt de Google Fonts URL automatisch op uit de fontnamen

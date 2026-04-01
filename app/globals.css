@@ -1,5 +1,12 @@
 @import "tailwindcss";
 
+@font-face {
+  font-family: 'Hoarsely Single Line';
+  src: url('/fonts/HoarselySingleLine.ttf') format('truetype');
+  font-weight: normal;
+  font-display: swap;
+}
+
 /* ============================================================
    JULIES ART — Design System (Tailwind CSS v4)
    ============================================================ */
