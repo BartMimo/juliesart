@@ -9,7 +9,7 @@ import {
 } from 'lucide-react'
 import { Product, PersonalizationField, PersonalizationFieldType, PersonalizationOption } from '@/types'
 import { cn, formatPrice } from '@/lib/utils'
-import { FONTS, getFontPreviewStyle } from '@/lib/fonts'
+import { DEFAULT_FONTS, getFontPreviewStyle } from '@/lib/fonts'
 
 // ─── Fallback option sets ─────────────────────────────────────────────────────
 
@@ -29,7 +29,7 @@ function makeFallback(list: Partial<PersonalizationOption>[]): PersonalizationOp
 }
 
 const FALLBACK_FONTS = makeFallback(
-  FONTS.map(f => ({ value: f.value, label: f.name, font_preview: f.family }))
+  DEFAULT_FONTS.map(f => ({ value: f.value, label: f.label, font_preview: f.family }))
 )
 
 const FALLBACK_ICONS = makeFallback([

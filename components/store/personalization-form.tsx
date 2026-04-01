@@ -6,15 +6,15 @@ import { HelpCircle, Check } from 'lucide-react'
 import { PersonalizationField, PersonalizationValues, PersonalizationOption } from '@/types'
 import { Input } from '@/components/ui/input'
 import { cn, getFieldTypeLabel } from '@/lib/utils'
-import { FONTS, getFontPreviewStyle } from '@/lib/fonts'
+import { DEFAULT_FONTS, getFontPreviewStyle } from '@/lib/fonts'
 
 // ─── Fallback fonts (used when a font field has no options configured) ────────
 
-const FALLBACK_FONTS: PersonalizationOption[] = FONTS.map((f, i) => ({
+const FALLBACK_FONTS: PersonalizationOption[] = DEFAULT_FONTS.map((f, i) => ({
   id: `fallback-${f.value}`,
   field_id: '',
   value: f.value,
-  label: f.name,
+  label: f.label,
   image_url: null,
   color_hex: null,
   font_preview: f.family,

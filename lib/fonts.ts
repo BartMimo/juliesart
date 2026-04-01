@@ -97,6 +97,12 @@ export const FONTS: FontConfig[] = [
   },
 ]
 
+// De 6 standaard lettertypes die overal als default worden gebruikt
+const DEFAULT_FONT_VALUES = ['pacifico', 'greatvibes', 'nunito', 'amaticsc', 'dancingscript', 'craftygirls']
+export const DEFAULT_FONTS = FONTS
+  .filter(f => DEFAULT_FONT_VALUES.includes(f.value))
+  .sort((a, b) => DEFAULT_FONT_VALUES.indexOf(a.value) - DEFAULT_FONT_VALUES.indexOf(b.value))
+
 // Geeft de juiste inline style terug voor een font preview.
 // Single-line fonts krijgen automatisch een stroke zodat ze zichtbaar zijn.
 export function getFontPreviewStyle(fontFamily: string | null | undefined): CSSProperties {
