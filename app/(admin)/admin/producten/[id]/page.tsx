@@ -38,8 +38,10 @@ export default function ProductEditPage() {
   const params = useParams()
   const router = useRouter()
   const toast = useToast()
-  const isNew = params.id === 'nieuw'
-  const [loading, setLoading] = useState(!isNew)
+  const rawIsNew = params.id === 'nieuw'
+  const [isNew, setIsNew] = useState(rawIsNew)
+  const [productId, setProductId] = useState<string>(params.id as string)
+  const [loading, setLoading] = useState(!rawIsNew)
   const [saving, setSaving] = useState(false)
   const [product, setProduct] = useState<Product | null>(null)
   const [images, setImages] = useState<ProductImage[]>([])
@@ -69,7 +71,7 @@ export default function ProductEditPage() {
       setCategories(cats ?? [])
 
       // Load selected categories from junction table (for existing products)
-      if (!isNew) {
+      if (!rawIsNew) {
         const { data: pc } = await supabase
           .from('product_categories')
           .select('category_id')
@@ -79,7 +81,7 @@ export default function ProductEditPage() {
         }
       }
 
-      if (!isNew) {
+      if (!rawIsNew) {
         const { data: p } = await supabase
           .from('products')
           .select(`
@@ -124,7 +126,7 @@ export default function ProductEditPage() {
       category_id: selectedCategoryIds[0] ?? null,
     }
 
-    let savedProductId = params.id as string
+    let savedProductId = productId
 
     if (isNew) {
       const { data: created, error } = await supabase
@@ -139,7 +141,13 @@ export default function ProductEditPage() {
         return
       }
       savedProductId = created.id
-      toast.success('Product aangemaakt!')
+
+      // Switch to edit mode without a page redirect
+      setProduct(created)
+      setProductId(created.id)
+      setIsNew(false)
+      window.history.replaceState(null, '', `/admin/producten/${created.id}`)
+      toast.success('Product aangemaakt! Je kunt nu afbeeldingen toevoegen.')
     } else {
       const { error } = await supabase
         .from('products')
@@ -161,9 +169,7 @@ export default function ProductEditPage() {
       )
     }
 
-    if (isNew) {
-      router.push(`/admin/producten/${savedProductId}`)
-    } else {
+    if (!isNew) {
       toast.success('Product opgeslagen!')
     }
 
@@ -173,7 +179,7 @@ export default function ProductEditPage() {
   const handleDelete = async () => {
     if (!confirm('Weet je zeker dat je dit product wil verwijderen? Dit kan niet ongedaan worden gemaakt.')) return
 
-    const { error } = await supabase.from('products').delete().eq('id', params.id as string)
+    const { error } = await supabase.from('products').delete().eq('id', productId)
     if (error) {
       toast.error('Kon product niet verwijderen')
     } else {
@@ -393,7 +399,7 @@ export default function ProductEditPage() {
               <p className="text-xs font-bold text-neutral-400 uppercase tracking-wide mb-3">Snel navigeren</p>
               <div className="space-y-2">
                 <Link
-                  href={`/admin/producten/${params.id}/personalisatie`}
+                  href={`/admin/producten/${productId}/personalisatie`}
                   className="flex items-center justify-between text-sm text-neutral-600 hover:text-brand-600 font-medium py-1"
                 >
                   Personalisatie beheren <ArrowLeft className="h-4 w-4 rotate-180" />
