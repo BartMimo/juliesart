@@ -68,7 +68,7 @@ export default function WinkelwagenPage() {
             Voeg een product toe en kom terug — we hebben mooie dingen voor je!
           </p>
           <Button asChild size="lg">
-            <Link href="/winkel">
+            <Link href="/collecties">
               <ShoppingBag className="h-5 w-5" />
               Ga winkelen
             </Link>
@@ -100,7 +100,7 @@ export default function WinkelwagenPage() {
 
             {/* Continue shopping */}
             <Link
-              href="/winkel"
+              href="/collecties"
               className="inline-flex items-center gap-2 text-sm text-brand-600 hover:text-brand-700 font-semibold mt-2 transition-colors"
             >
               ← Verder winkelen

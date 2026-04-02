@@ -179,7 +179,7 @@ function BetalingSucesContent() {
               </Button>
             )}
             <Button asChild size="lg" variant="outline">
-              <Link href="/winkel">
+              <Link href="/collecties">
                 Verder winkelen
               </Link>
             </Button>

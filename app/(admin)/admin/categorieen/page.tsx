@@ -157,7 +157,7 @@ export default function CategorieenPage() {
           </DialogHeader>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mt-2">
             <Input label="Naam" required error={errors.name?.message} {...register('name')} />
-            <Input label="Slug" required helpText="/winkel/jouw-slug" error={errors.slug?.message} {...register('slug')} />
+            <Input label="Slug" required helpText="/collecties/jouw-slug" error={errors.slug?.message} {...register('slug')} />
             <Textarea label="Beschrijving" rows={2} {...register('description')} />
             <Input label="Sorteervolgorde" type="number" min="0" {...register('sort_order')} />
             <label className="flex items-center gap-2 cursor-pointer text-sm font-semibold text-neutral-700">

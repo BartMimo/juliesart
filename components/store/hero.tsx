@@ -59,13 +59,13 @@ export function Hero() {
             className="flex flex-col sm:flex-row items-center justify-center gap-4"
           >
             <Button asChild size="xl">
-              <Link href="/winkel">
+              <Link href="/collecties">
                 Bekijk de collectie
                 <ArrowRight className="h-5 w-5" />
               </Link>
             </Button>
             <Button asChild size="xl" variant="outline">
-              <Link href="/winkel">
+              <Link href="/collecties">
                 Bekijk alle cadeaus
               </Link>
             </Button>

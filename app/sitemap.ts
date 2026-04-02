@@ -7,7 +7,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const staticPages: MetadataRoute.Sitemap = [
     { url: SITE_URL, lastModified: new Date(), changeFrequency: 'weekly', priority: 1.0 },
-    { url: `${SITE_URL}/winkel`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
+    { url: `${SITE_URL}/collecties`, lastModified: new Date(), changeFrequency: 'daily', priority: 0.9 },
     { url: `${SITE_URL}/contact`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.5 },
     { url: `${SITE_URL}/privacybeleid`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
     { url: `${SITE_URL}/algemene-voorwaarden`, lastModified: new Date(), changeFrequency: 'monthly', priority: 0.3 },
@@ -20,7 +20,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     .eq('is_active', true)
 
   const categoryPages: MetadataRoute.Sitemap = (categories ?? []).map((cat) => ({
-    url: `${SITE_URL}/winkel/${cat.slug}`,
+    url: `${SITE_URL}/collecties/${cat.slug}`,
     lastModified: new Date(cat.updated_at),
     changeFrequency: 'weekly' as const,
     priority: 0.8,

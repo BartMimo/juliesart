@@ -12,7 +12,7 @@ import { CartSidebar } from '@/components/store/cart-sidebar'
 
 const navLinks = [
   { href: '/', label: 'Home' },
-  { href: '/winkel', label: 'Winkel' },
+  { href: '/collecties', label: 'Collecties' },
   { href: '/contact', label: 'Contact' },
 ]
 
@@ -89,7 +89,7 @@ export function Header() {
             <div className="flex items-center gap-2">
               {/* Search — links to shop */}
               <Link
-                href="/winkel"
+                href="/collecties"
                 className="hidden md:flex p-2.5 rounded-full hover:bg-brand-50 text-neutral-500 hover:text-brand-600 transition-colors"
                 aria-label="Zoeken"
               >

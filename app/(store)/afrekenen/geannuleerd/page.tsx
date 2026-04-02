@@ -24,7 +24,7 @@ export default function BetalingGeannuleerdPage() {
             </Link>
           </Button>
           <Button asChild size="lg" variant="outline">
-            <Link href="/winkel">
+            <Link href="/collecties">
               <ArrowLeft className="h-5 w-5" />
               Verder winkelen
             </Link>

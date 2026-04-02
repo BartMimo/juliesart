@@ -27,7 +27,7 @@ export function WinkelToolbar({ total, currentSort, currentCategorie }: WinkelTo
     } else {
       params.set('sorteren', value)
     }
-    router.push(`/winkel?${params.toString()}`)
+    router.push(`/collecties?${params.toString()}`)
   }
 
   return (

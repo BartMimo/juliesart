@@ -43,7 +43,7 @@ export function Winkel2FilterBar({ categories, zoeken, categorie, sorteren, tota
     if (params.categorie) p.set('categorie', params.categorie)
     if (params.zoeken) p.set('zoeken', params.zoeken)
     if (params.sorteren && params.sorteren !== 'nieuwst') p.set('sorteren', params.sorteren)
-    return `/winkel${p.toString() ? `?${p.toString()}` : ''}`
+    return `/collecties${p.toString() ? `?${p.toString()}` : ''}`
   }
 
   const handleSearch = (e: React.FormEvent) => {
@@ -332,7 +332,7 @@ export function Winkel2Grid({ products, zoeken }: ProductGridProps) {
           Probeer een andere zoekterm of bekijk onze volledige collectie.
         </p>
         <Link
-          href="/winkel"
+          href="/collecties"
           className="inline-flex items-center gap-2 px-5 py-2.5 bg-brand-500 text-white rounded-xl text-sm font-bold hover:bg-brand-600 transition-colors"
         >
           Bekijk alles

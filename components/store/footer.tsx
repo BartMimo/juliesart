@@ -5,7 +5,7 @@ import { INSTAGRAM_URL, FACEBOOK_URL } from '@/lib/constants'
 
 const footerLinks = {
   winkel: [
-    { href: '/winkel', label: 'Alle producten' },
+    { href: '/collecties', label: 'Alle producten' },
   ],
   info: [
     { href: '/contact', label: 'Contact' },

@@ -36,7 +36,7 @@ export function FeaturedProductsClient({
           </div>
 
           <Link
-            href="/winkel"
+            href="/collecties"
             className="whitespace-nowrap text-sm font-semibold text-brand-600 transition-colors hover:text-brand-700"
           >
             <span className="flex items-center gap-2">

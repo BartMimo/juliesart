@@ -45,7 +45,7 @@ export function CategoryGridClient({ categories }: CategoryGridClientProps) {
           {categories.map((category) => (
             <motion.div key={category.id} variants={staggerItem}>
               <Link
-                href={`/winkel/${category.slug}`}
+                href={`/collecties/${category.slug}`}
                 className="group block overflow-hidden rounded-2xl border border-neutral-100 bg-white transition-all duration-300 hover:border-brand-200 hover:shadow-hover"
               >
                 <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-brand-50 to-peach-50">

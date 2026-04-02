@@ -36,7 +36,7 @@ export default async function BestellingenPage() {
             Je hebt nog niets besteld. Bekijk onze collectie!
           </p>
           <Link
-            href="/winkel"
+            href="/collecties"
             className="inline-flex items-center gap-2 bg-brand-500 hover:bg-brand-600 text-white font-bold px-6 py-3 rounded-full transition-colors text-sm"
           >
             Naar de winkel <ArrowRight className="h-4 w-4" />

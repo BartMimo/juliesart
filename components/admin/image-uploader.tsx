@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import Image from 'next/image'
-import { Upload, X, Star, Loader2, ImagePlus } from 'lucide-react'
+import { GripVertical, X, Star, Loader2, ImagePlus } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { ProductImage } from '@/types'
 import { useToast } from '@/components/ui/toaster'
@@ -15,6 +15,8 @@ interface ImageUploaderProps {
 
 export function ImageUploader({ productId, images, onImagesChange }: ImageUploaderProps) {
   const [uploading, setUploading] = useState(false)
+  const [dragOverId, setDragOverId] = useState<string | null>(null)
+  const draggedId = useRef<string | null>(null)
   const toast = useToast()
   const supabase = createClient()
 
@@ -106,6 +108,39 @@ export function ImageUploader({ productId, images, onImagesChange }: ImageUpload
     onImagesChange(updated)
   }
 
+  const handleDragStart = (id: string) => {
+    draggedId.current = id
+  }
+
+  const handleDragOver = (e: React.DragEvent, id: string) => {
+    e.preventDefault()
+    if (draggedId.current !== id) setDragOverId(id)
+  }
+
+  const handleDrop = async (targetId: string) => {
+    setDragOverId(null)
+    const fromId = draggedId.current
+    draggedId.current = null
+    if (!fromId || fromId === targetId) return
+
+    const sorted = [...images].sort((a, b) => a.sort_order - b.sort_order)
+    const fromIdx = sorted.findIndex(i => i.id === fromId)
+    const toIdx = sorted.findIndex(i => i.id === targetId)
+    if (fromIdx === -1 || toIdx === -1) return
+
+    const reordered = [...sorted]
+    const [moved] = reordered.splice(fromIdx, 1)
+    reordered.splice(toIdx, 0, moved)
+
+    const updated = reordered.map((img, idx) => ({ ...img, sort_order: idx }))
+    onImagesChange(updated)
+
+    // Persist to DB
+    await Promise.all(
+      updated.map(img => supabase.from('product_images').update({ sort_order: img.sort_order }).eq('id', img.id))
+    )
+  }
+
   const sortedImages = [...images].sort((a, b) => a.sort_order - b.sort_order)
 
   return (
@@ -145,14 +180,34 @@ export function ImageUploader({ productId, images, onImagesChange }: ImageUpload
       {sortedImages.length > 0 && (
         <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
           {sortedImages.map((image) => (
-            <div key={image.id} className="relative group aspect-square rounded-xl overflow-hidden bg-neutral-100 border border-neutral-200">
+            <div
+              key={image.id}
+              draggable
+              onDragStart={() => handleDragStart(image.id)}
+              onDragOver={(e) => handleDragOver(e, image.id)}
+              onDrop={() => handleDrop(image.id)}
+              onDragLeave={() => setDragOverId(null)}
+              onDragEnd={() => { draggedId.current = null; setDragOverId(null) }}
+              className={`relative group aspect-square rounded-xl overflow-hidden bg-neutral-100 border-2 transition-all cursor-grab active:cursor-grabbing ${
+                dragOverId === image.id
+                  ? 'border-brand-400 scale-105 shadow-lg'
+                  : 'border-neutral-200'
+              }`}
+            >
               <Image
                 src={image.url}
                 alt={image.alt ?? 'Product afbeelding'}
                 fill
-                className="object-cover"
+                className="object-cover pointer-events-none"
                 sizes="120px"
               />
+
+              {/* Drag handle */}
+              <div className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="w-6 h-6 bg-black/40 rounded-md flex items-center justify-center">
+                  <GripVertical className="h-3.5 w-3.5 text-white" />
+                </div>
+              </div>
 
               {/* Primary badge */}
               {image.is_primary && (

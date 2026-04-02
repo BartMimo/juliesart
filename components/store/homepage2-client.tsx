@@ -80,7 +80,7 @@ export function HomepageHero2() {
               className="flex flex-col sm:flex-row gap-3 mb-10"
             >
               <Button asChild size="xl">
-                <Link href="/winkel">
+                <Link href="/collecties">
                   <ShoppingBag className="h-5 w-5" />
                   Bekijk de collectie
                 </Link>
@@ -287,7 +287,7 @@ export function HowItWorks2() {
         {/* Arrow connectors desktop — decorative */}
         <SectionReveal className="mt-12 text-center">
           <Button asChild size="lg">
-            <Link href="/winkel">
+            <Link href="/collecties">
               Begin nu
               <ArrowRight className="h-4 w-4" />
             </Link>
@@ -483,7 +483,7 @@ export function BrandStory2() {
             </ul>
 
             <Button asChild size="lg" variant="outline">
-              <Link href="/winkel">
+              <Link href="/collecties">
                 Ontdek de collectie
                 <ArrowRight className="h-4 w-4" />
               </Link>
@@ -568,7 +568,7 @@ export function FinalCta2() {
                 size="xl"
                 className="bg-white text-brand-700 hover:bg-brand-50 shadow-lg"
               >
-                <Link href="/winkel">
+                <Link href="/collecties">
                   <ShoppingBag className="h-5 w-5" />
                   Bekijk de collectie
                 </Link>

@@ -152,11 +152,11 @@ export default function ProductPage() {
         <nav className="text-sm text-neutral-400 mb-8 flex items-center gap-2 overflow-hidden">
           <a href="/" className="hover:text-brand-500 transition-colors shrink-0">Home</a>
           <span className="shrink-0">/</span>
-          <a href="/winkel" className="hover:text-brand-500 transition-colors shrink-0">Winkel</a>
+          <a href="/collecties" className="hover:text-brand-500 transition-colors shrink-0">Collecties</a>
           {product.category && (
             <>
               <span className="shrink-0">/</span>
-              <a href={`/winkel?categorie=${product.category.slug}`} className="hover:text-brand-500 transition-colors shrink-0">
+              <a href={`/collecties?categorie=${product.category.slug}`} className="hover:text-brand-500 transition-colors shrink-0">
                 {product.category.name}
               </a>
             </>
