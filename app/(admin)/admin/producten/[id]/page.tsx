@@ -38,10 +38,9 @@ export default function ProductEditPage() {
   const params = useParams()
   const router = useRouter()
   const toast = useToast()
-  const rawIsNew = params.id === 'nieuw'
-  const [isNew, setIsNew] = useState(rawIsNew)
-  const [productId, setProductId] = useState<string>(params.id as string)
-  const [loading, setLoading] = useState(!rawIsNew)
+  const isNew = params.id === 'nieuw'
+  const productId = params.id as string
+  const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [product, setProduct] = useState<Product | null>(null)
   const [images, setImages] = useState<ProductImage[]>([])
@@ -56,13 +55,14 @@ export default function ProductEditPage() {
   })
 
   const nameValue = watch('name')
+  const slugValue = watch('slug')
 
-  // Auto-generate slug from name (only for new products)
+  // Auto-generate slug from name when it's still a concept slug
   useEffect(() => {
-    if (isNew && nameValue) {
+    if (nameValue && slugValue?.startsWith('concept-')) {
       setValue('slug', slugify(nameValue))
     }
-  }, [nameValue, isNew, setValue])
+  }, [nameValue])
 
   useEffect(() => {
     async function load() {
@@ -70,51 +70,70 @@ export default function ProductEditPage() {
       const { data: cats } = await supabase.from('categories').select('*').eq('is_active', true).order('sort_order')
       setCategories(cats ?? [])
 
-      // Load selected categories from junction table (for existing products)
-      if (!rawIsNew) {
-        const { data: pc } = await supabase
-          .from('product_categories')
-          .select('category_id')
-          .eq('product_id', params.id)
-        if (pc && pc.length > 0) {
-          setSelectedCategoryIds(pc.map((r: { category_id: string }) => r.category_id))
-        }
-      }
-
-      if (!rawIsNew) {
-        const { data: p } = await supabase
+      if (isNew) {
+        // Create a draft product immediately so images can be uploaded right away
+        const { data: draft, error } = await supabase
           .from('products')
-          .select(`
-            *,
-            images:product_images(*),
-            personalization_fields(*, options:personalization_options(*))
-          `)
-          .eq('id', params.id)
+          .insert({
+            name: '',
+            slug: `concept-${Date.now()}`,
+            price: 0.01,
+            is_active: false,
+            is_featured: false,
+            is_sold_out: false,
+          })
+          .select()
           .single()
 
-        if (p) {
-          setProduct(p)
-          setImages(p.images ?? [])
-          setPersonalizationFields(p.personalization_fields ?? [])
-
-          // Populate form
-          setValue('name', p.name)
-          setValue('slug', p.slug)
-          setValue('short_description', p.short_description ?? '')
-          setValue('description', p.description ?? '')
-          setValue('price', p.price)
-          setValue('compare_at_price', p.compare_at_price ?? null)
-          setValue('is_active', p.is_active)
-          setValue('is_featured', p.is_featured)
-          setValue('is_sold_out', p.is_sold_out)
-          setValue('meta_title', p.meta_title ?? '')
-          setValue('meta_description', p.meta_description ?? '')
+        if (!error && draft) {
+          router.replace(`/admin/producten/${draft.id}`)
+        } else {
+          setLoading(false)
         }
+        return
+      }
+
+      // Load selected categories from junction table (for existing products)
+      const { data: pc } = await supabase
+        .from('product_categories')
+        .select('category_id')
+        .eq('product_id', params.id)
+      if (pc && pc.length > 0) {
+        setSelectedCategoryIds(pc.map((r: { category_id: string }) => r.category_id))
+      }
+
+      const { data: p } = await supabase
+        .from('products')
+        .select(`
+          *,
+          images:product_images(*),
+          personalization_fields(*, options:personalization_options(*))
+        `)
+        .eq('id', params.id)
+        .single()
+
+      if (p) {
+        setProduct(p)
+        setImages(p.images ?? [])
+        setPersonalizationFields(p.personalization_fields ?? [])
+
+        // Populate form
+        setValue('name', p.name)
+        setValue('slug', p.slug)
+        setValue('short_description', p.short_description ?? '')
+        setValue('description', p.description ?? '')
+        setValue('price', p.price)
+        setValue('compare_at_price', p.compare_at_price ?? null)
+        setValue('is_active', p.is_active)
+        setValue('is_featured', p.is_featured)
+        setValue('is_sold_out', p.is_sold_out)
+        setValue('meta_title', p.meta_title ?? '')
+        setValue('meta_description', p.meta_description ?? '')
       }
       setLoading(false)
     }
     load()
-  }, [params.id, isNew])
+  }, [params.id])
 
   const onSubmit = async (data: FormData) => {
     setSaving(true)
@@ -126,39 +145,17 @@ export default function ProductEditPage() {
       category_id: selectedCategoryIds[0] ?? null,
     }
 
-    let savedProductId = productId
+    const savedProductId = productId
 
-    if (isNew) {
-      const { data: created, error } = await supabase
-        .from('products')
-        .insert(payload)
-        .select()
-        .single()
+    const { error } = await supabase
+      .from('products')
+      .update(payload)
+      .eq('id', savedProductId)
 
-      if (error) {
-        toast.error('Kon product niet opslaan', error.message)
-        setSaving(false)
-        return
-      }
-      savedProductId = created.id
-
-      // Switch to edit mode without a page redirect
-      setProduct(created)
-      setProductId(created.id)
-      setIsNew(false)
-      window.history.replaceState(null, '', `/admin/producten/${created.id}`)
-      toast.success('Product aangemaakt! Je kunt nu afbeeldingen toevoegen.')
-    } else {
-      const { error } = await supabase
-        .from('products')
-        .update(payload)
-        .eq('id', savedProductId)
-
-      if (error) {
-        toast.error('Kon product niet opslaan', error.message)
-        setSaving(false)
-        return
-      }
+    if (error) {
+      toast.error('Kon product niet opslaan', error.message)
+      setSaving(false)
+      return
     }
 
     // Sync junction table: delete all then re-insert selected
@@ -169,10 +166,7 @@ export default function ProductEditPage() {
       )
     }
 
-    if (!isNew) {
-      toast.success('Product opgeslagen!')
-    }
-
+    toast.success('Product opgeslagen!')
     setSaving(false)
   }
 
