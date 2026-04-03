@@ -28,6 +28,8 @@ const schema = z.object({
   is_active: z.boolean(),
   is_featured: z.boolean(),
   is_sold_out: z.boolean(),
+  is_personalizable: z.boolean(),
+  is_sale: z.boolean(),
   meta_title: z.string().optional(),
   meta_description: z.string().optional(),
 })
@@ -51,7 +53,7 @@ export default function ProductEditPage() {
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { is_active: true, is_featured: false, is_sold_out: false },
+    defaultValues: { is_active: true, is_featured: false, is_sold_out: false, is_personalizable: false, is_sale: false },
   })
 
   const nameValue = watch('name')
@@ -127,6 +129,8 @@ export default function ProductEditPage() {
         setValue('is_active', p.is_active)
         setValue('is_featured', p.is_featured)
         setValue('is_sold_out', p.is_sold_out)
+        setValue('is_personalizable', p.is_personalizable ?? false)
+        setValue('is_sale', p.is_sale ?? false)
         setValue('meta_title', p.meta_title ?? '')
         setValue('meta_description', p.meta_description ?? '')
       }
@@ -383,6 +387,20 @@ export default function ProductEditPage() {
                 <div>
                   <span className="text-sm font-semibold text-neutral-700">Uitverkocht</span>
                   <p className="text-xs text-neutral-400">Toont uitverkocht-overlay op het product</p>
+                </div>
+              </label>
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input type="checkbox" className="w-4 h-4 accent-brand-500" {...register('is_personalizable')} />
+                <div>
+                  <span className="text-sm font-semibold text-neutral-700">Personaliseerbaar</span>
+                  <p className="text-xs text-neutral-400">Toon "Op naam" badge + filterbaar in winkel</p>
+                </div>
+              </label>
+              <label className="flex items-center gap-3 cursor-pointer">
+                <input type="checkbox" className="w-4 h-4 accent-brand-500" {...register('is_sale')} />
+                <div>
+                  <span className="text-sm font-semibold text-neutral-700">Sale</span>
+                  <p className="text-xs text-neutral-400">Toon sale-badge + filterbaar in winkel</p>
                 </div>
               </label>
             </div>

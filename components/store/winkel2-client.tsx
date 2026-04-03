@@ -1,36 +1,289 @@
 'use client'
 
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, X, ChevronDown, Sparkles, ShoppingBag, ArrowRight } from 'lucide-react'
+import { Search, X, ChevronDown, Sparkles, ShoppingBag, ArrowRight, SlidersHorizontal } from 'lucide-react'
 import { Product, Category } from '@/types'
 import { formatPrice, cn } from '@/lib/utils'
 
 // ─────────────────────────────────────────────────────────────────────────────
-// STICKY FILTER BAR
+// TYPES
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface Filters {
+  zoeken: string
+  categorieen: string       // comma-separated slugs
+  sorteren: string
+  personaliseren: boolean
+  sale: boolean
+  prijs_min: number | null
+  prijs_max: number | null
+}
+
+interface CollectiesLayoutProps {
+  products: Product[]
+  categories: Category[]
+  filters: Filters
+  maxProductPrice: number
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// URL BUILDER
+// ─────────────────────────────────────────────────────────────────────────────
+
+function buildUrl(filters: Partial<Filters> & { prijs_min?: number | null; prijs_max?: number | null }) {
+  const p = new URLSearchParams()
+  if (filters.zoeken)       p.set('zoeken', filters.zoeken)
+  if (filters.categorieen)  p.set('categorieen', filters.categorieen)
+  if (filters.sorteren && filters.sorteren !== 'nieuwst') p.set('sorteren', filters.sorteren)
+  if (filters.personaliseren) p.set('personaliseren', '1')
+  if (filters.sale)         p.set('sale', '1')
+  if (filters.prijs_min != null && filters.prijs_min > 0)    p.set('prijs_min', String(filters.prijs_min))
+  if (filters.prijs_max != null)                              p.set('prijs_max', String(filters.prijs_max))
+  return `/collecties${p.toString() ? `?${p.toString()}` : ''}`
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SORT OPTIONS
 // ─────────────────────────────────────────────────────────────────────────────
 
 const sortOptions = [
-  { value: 'nieuwst', label: 'Nieuwst' },
+  { value: 'nieuwst',    label: 'Nieuwst' },
   { value: 'prijs-laag', label: 'Prijs oplopend' },
   { value: 'prijs-hoog', label: 'Prijs aflopend' },
-  { value: 'naam', label: 'Naam A–Z' },
+  { value: 'naam',       label: 'Naam A–Z' },
 ]
 
-interface FilterBarProps {
-  categories: Category[]
-  zoeken: string
-  categorie: string
-  sorteren: string
-  total: number
+// ─────────────────────────────────────────────────────────────────────────────
+// PRICE RANGE SLIDER
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface PriceSliderProps {
+  min: number
+  max: number
+  valueMin: number
+  valueMax: number
+  onChange: (min: number, max: number) => void
 }
 
-export function Winkel2FilterBar({ categories, zoeken, categorie, sorteren, total }: FilterBarProps) {
-  const [query, setQuery] = useState(zoeken)
+function PriceSlider({ min, max, valueMin, valueMax, onChange }: PriceSliderProps) {
+  const [localMin, setLocalMin] = useState(valueMin)
+  const [localMax, setLocalMax] = useState(valueMax)
+  const trackRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => { setLocalMin(valueMin) }, [valueMin])
+  useEffect(() => { setLocalMax(valueMax) }, [valueMax])
+
+  const pct = (v: number) => ((v - min) / (max - min)) * 100
+
+  return (
+    <div className="px-1 pb-1">
+      {/* Price labels */}
+      <div className="flex justify-between text-xs font-semibold text-neutral-600 mb-3">
+        <span>{formatPrice(localMin)}</span>
+        <span>{formatPrice(localMax)}</span>
+      </div>
+
+      {/* Slider track */}
+      <div ref={trackRef} className="relative h-5 flex items-center">
+        {/* Background track */}
+        <div className="absolute w-full h-1.5 rounded-full bg-neutral-200" />
+        {/* Active range */}
+        <div
+          className="absolute h-1.5 rounded-full bg-brand-500"
+          style={{ left: `${pct(localMin)}%`, right: `${100 - pct(localMax)}%` }}
+        />
+
+        {/* Min thumb */}
+        <input
+          type="range"
+          min={min}
+          max={max}
+          step={1}
+          value={localMin}
+          onChange={e => {
+            const v = Math.min(Number(e.target.value), localMax - 1)
+            setLocalMin(v)
+          }}
+          onMouseUp={() => onChange(localMin, localMax)}
+          onTouchEnd={() => onChange(localMin, localMax)}
+          className="absolute w-full h-1.5 appearance-none bg-transparent cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-brand-500 [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-grab"
+          style={{ zIndex: localMin >= localMax - 1 ? 5 : 3 }}
+        />
+        {/* Max thumb */}
+        <input
+          type="range"
+          min={min}
+          max={max}
+          step={1}
+          value={localMax}
+          onChange={e => {
+            const v = Math.max(Number(e.target.value), localMin + 1)
+            setLocalMax(v)
+          }}
+          onMouseUp={() => onChange(localMin, localMax)}
+          onTouchEnd={() => onChange(localMin, localMax)}
+          className="absolute w-full h-1.5 appearance-none bg-transparent cursor-pointer [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-5 [&::-webkit-slider-thumb]:h-5 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:border-2 [&::-webkit-slider-thumb]:border-brand-500 [&::-webkit-slider-thumb]:shadow-md [&::-webkit-slider-thumb]:cursor-grab"
+          style={{ zIndex: 4 }}
+        />
+      </div>
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TOGGLE SWITCH
+// ─────────────────────────────────────────────────────────────────────────────
+
+function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label: string }) {
+  return (
+    <button
+      onClick={() => onChange(!checked)}
+      className="flex items-center justify-between w-full py-0.5 group"
+    >
+      <span className={cn('text-sm font-medium transition-colors', checked ? 'text-neutral-900' : 'text-neutral-600 group-hover:text-neutral-800')}>
+        {label}
+      </span>
+      <div className={cn('relative w-10 h-5.5 rounded-full transition-colors duration-200 flex-shrink-0', checked ? 'bg-brand-500' : 'bg-neutral-200')}>
+        <div className={cn('absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform duration-200', checked ? 'translate-x-5' : 'translate-x-0.5')} />
+      </div>
+    </button>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// FILTER PANEL (sidebar content)
+// ─────────────────────────────────────────────────────────────────────────────
+
+interface FilterPanelProps {
+  categories: Category[]
+  filters: Filters
+  maxProductPrice: number
+}
+
+function FilterPanel({ categories, filters, maxProductPrice }: FilterPanelProps) {
+  const selectedCats = filters.categorieen ? filters.categorieen.split(',').filter(Boolean) : []
+
+  const toggleCategory = (slug: string) => {
+    const next = selectedCats.includes(slug)
+      ? selectedCats.filter(s => s !== slug)
+      : [...selectedCats, slug]
+    window.location.href = buildUrl({ ...filters, categorieen: next.join(',') })
+  }
+
+  const handlePriceChange = (min: number, max: number) => {
+    window.location.href = buildUrl({
+      ...filters,
+      prijs_min: min > 0 ? min : null,
+      prijs_max: max < maxProductPrice ? max : null,
+    })
+  }
+
+  const handleToggle = (key: 'personaliseren' | 'sale', value: boolean) => {
+    window.location.href = buildUrl({ ...filters, [key]: value })
+  }
+
+  const hasActiveFilters = selectedCats.length > 0 || filters.personaliseren || filters.sale ||
+    (filters.prijs_min != null && filters.prijs_min > 0) ||
+    (filters.prijs_max != null && filters.prijs_max < maxProductPrice)
+
+  return (
+    <div className="space-y-6">
+      {/* Clear all */}
+      {hasActiveFilters && (
+        <Link
+          href={buildUrl({ sorteren: filters.sorteren, zoeken: filters.zoeken })}
+          className="flex items-center gap-1.5 text-xs font-bold text-brand-500 hover:text-brand-600 transition-colors"
+        >
+          <X className="h-3.5 w-3.5" />
+          Alle filters wissen
+        </Link>
+      )}
+
+      {/* Categories */}
+      <div>
+        <h3 className="text-xs font-black text-neutral-400 uppercase tracking-widest mb-3">Categorie</h3>
+        <div className="space-y-2">
+          {categories.map(cat => (
+            <label key={cat.id} className="flex items-center gap-3 cursor-pointer group">
+              <div
+                onClick={() => toggleCategory(cat.slug)}
+                className={cn(
+                  'w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 transition-all cursor-pointer',
+                  selectedCats.includes(cat.slug)
+                    ? 'bg-brand-500 border-brand-500'
+                    : 'border-neutral-300 group-hover:border-brand-400'
+                )}
+              >
+                {selectedCats.includes(cat.slug) && (
+                  <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 12 12">
+                    <path d="M2 6l3 3 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                )}
+              </div>
+              <span
+                onClick={() => toggleCategory(cat.slug)}
+                className={cn(
+                  'text-sm transition-colors cursor-pointer',
+                  selectedCats.includes(cat.slug) ? 'font-semibold text-neutral-900' : 'text-neutral-600 group-hover:text-neutral-800'
+                )}
+              >
+                {cat.name}
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      {/* Divider */}
+      <div className="h-px bg-neutral-100" />
+
+      {/* Price range */}
+      <div>
+        <h3 className="text-xs font-black text-neutral-400 uppercase tracking-widest mb-4">Prijs</h3>
+        <PriceSlider
+          min={0}
+          max={maxProductPrice}
+          valueMin={filters.prijs_min ?? 0}
+          valueMax={filters.prijs_max ?? maxProductPrice}
+          onChange={handlePriceChange}
+        />
+      </div>
+
+      {/* Divider */}
+      <div className="h-px bg-neutral-100" />
+
+      {/* Toggles */}
+      <div>
+        <h3 className="text-xs font-black text-neutral-400 uppercase tracking-widest mb-3">Eigenschappen</h3>
+        <div className="space-y-3">
+          <Toggle
+            label="Personaliseerbaar"
+            checked={filters.personaliseren}
+            onChange={v => handleToggle('personaliseren', v)}
+          />
+          <Toggle
+            label="Sale"
+            checked={filters.sale}
+            onChange={v => handleToggle('sale', v)}
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// MAIN LAYOUT
+// ─────────────────────────────────────────────────────────────────────────────
+
+export function CollectiesLayout({ products, categories, filters, maxProductPrice }: CollectiesLayoutProps) {
+  const [query, setQuery] = useState(filters.zoeken)
   const [scrolled, setScrolled] = useState(false)
   const [sortOpen, setSortOpen] = useState(false)
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false)
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 80)
@@ -38,91 +291,81 @@ export function Winkel2FilterBar({ categories, zoeken, categorie, sorteren, tota
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
-  const buildUrl = (params: Record<string, string>) => {
-    const p = new URLSearchParams()
-    if (params.categorie) p.set('categorie', params.categorie)
-    if (params.zoeken) p.set('zoeken', params.zoeken)
-    if (params.sorteren && params.sorteren !== 'nieuwst') p.set('sorteren', params.sorteren)
-    return `/collecties${p.toString() ? `?${p.toString()}` : ''}`
-  }
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
-    window.location.href = buildUrl({ categorie, zoeken: query.trim(), sorteren })
+    window.location.href = buildUrl({ ...filters, zoeken: query.trim() })
   }
 
-  const activeSort = sortOptions.find(o => o.value === (sorteren || 'nieuwst')) ?? sortOptions[0]
+  const activeSort = sortOptions.find(o => o.value === (filters.sorteren || 'nieuwst')) ?? sortOptions[0]
+
+  const selectedCats = filters.categorieen ? filters.categorieen.split(',').filter(Boolean) : []
+  const activeFilterCount =
+    selectedCats.length +
+    (filters.personaliseren ? 1 : 0) +
+    (filters.sale ? 1 : 0) +
+    ((filters.prijs_min != null && filters.prijs_min > 0) || (filters.prijs_max != null && filters.prijs_max < maxProductPrice) ? 1 : 0)
 
   return (
-    <div
-      className={cn(
+    <>
+      {/* Sticky top bar */}
+      <div className={cn(
         'sticky top-0 z-40 bg-cream/95 backdrop-blur-md border-b transition-all duration-300',
         scrolled ? 'border-brand-100 shadow-soft' : 'border-transparent'
-      )}
-    >
-      <div className="container-brand">
-        {/* Desktop filter bar */}
-        <div className="hidden md:flex items-center gap-0 py-3">
+      )}>
+        <div className="container-brand">
+          <div className="flex items-center gap-3 py-3">
+            {/* Search */}
+            <form onSubmit={handleSearch} className="relative flex-1 max-w-xs">
+              <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 pointer-events-none" />
+              <input
+                type="text"
+                value={query}
+                onChange={e => setQuery(e.target.value)}
+                placeholder="Zoek een product..."
+                className="w-full pl-10 pr-8 py-2.5 text-sm font-medium bg-white border border-brand-100 rounded-xl focus:outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-100 transition-all"
+              />
+              {query && (
+                <button type="button" onClick={() => { setQuery(''); window.location.href = buildUrl({ ...filters, zoeken: '' }) }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600">
+                  <X className="h-3.5 w-3.5" />
+                </button>
+              )}
+            </form>
 
-          {/* Search */}
-          <form onSubmit={handleSearch} className="relative mr-6 flex-shrink-0">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 pointer-events-none" />
-            <input
-              type="text"
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              placeholder="Zoek een product..."
-              className="pl-10 pr-8 py-2.5 text-sm font-medium bg-white border border-brand-100 rounded-xl w-52 focus:outline-none focus:border-brand-400 focus:ring-2 focus:ring-brand-100 transition-all"
-            />
-            {query && (
-              <button type="button" onClick={() => { setQuery(''); window.location.href = buildUrl({ categorie, sorteren }) }} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600">
-                <X className="h-3.5 w-3.5" />
-              </button>
-            )}
-          </form>
-
-          {/* Category pills */}
-          <div className="flex items-center gap-1.5 flex-1 overflow-x-auto scrollbar-hide">
-            <Link
-              href={buildUrl({ sorteren })}
+            {/* Mobile: filter toggle */}
+            <button
+              onClick={() => setMobileFiltersOpen(true)}
               className={cn(
-                'shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200',
-                !categorie
-                  ? 'bg-brand-500 text-white shadow-sm'
-                  : 'text-neutral-600 hover:bg-white hover:text-neutral-800 hover:shadow-soft'
+                'lg:hidden flex items-center gap-2 px-3.5 py-2.5 rounded-xl border text-sm font-semibold transition-colors',
+                activeFilterCount > 0
+                  ? 'bg-brand-500 text-white border-brand-500'
+                  : 'bg-white border-brand-100 text-neutral-700 hover:border-brand-300'
               )}
             >
-              Alles
-            </Link>
-            {categories.map(cat => (
-              <Link
-                key={cat.id}
-                href={buildUrl({ categorie: cat.slug, sorteren })}
-                className={cn(
-                  'shrink-0 px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-200',
-                  categorie === cat.slug
-                    ? 'bg-brand-500 text-white shadow-sm'
-                    : 'text-neutral-600 hover:bg-white hover:text-neutral-800 hover:shadow-soft'
-                )}
-              >
-                {cat.name}
-              </Link>
-            ))}
-          </div>
+              <SlidersHorizontal className="h-4 w-4" />
+              Filters
+              {activeFilterCount > 0 && (
+                <span className="w-5 h-5 rounded-full bg-white/30 text-white text-xs font-black flex items-center justify-center">
+                  {activeFilterCount}
+                </span>
+              )}
+            </button>
 
-          {/* Count + Sort */}
-          <div className="flex items-center gap-4 ml-6 flex-shrink-0">
-            <span className="text-sm text-neutral-400">
-              <span className="font-bold text-neutral-700">{total}</span> {total === 1 ? 'product' : 'producten'}
+            {/* Spacer */}
+            <div className="flex-1" />
+
+            {/* Count */}
+            <span className="hidden sm:block text-sm text-neutral-400 flex-shrink-0">
+              <span className="font-bold text-neutral-700">{products.length}</span> {products.length === 1 ? 'product' : 'producten'}
             </span>
 
             {/* Sort dropdown */}
-            <div className="relative">
+            <div className="relative flex-shrink-0">
               <button
                 onClick={() => setSortOpen(!sortOpen)}
                 className="flex items-center gap-2 px-4 py-2.5 bg-white border border-brand-100 rounded-xl text-sm font-semibold text-neutral-700 hover:border-brand-300 transition-colors"
               >
-                {activeSort.label}
+                <span className="hidden sm:inline">{activeSort.label}</span>
+                <span className="sm:hidden">Sorteren</span>
                 <ChevronDown className={cn('h-4 w-4 text-neutral-400 transition-transform', sortOpen && 'rotate-180')} />
               </button>
               <AnimatePresence>
@@ -137,17 +380,17 @@ export function Winkel2FilterBar({ categories, zoeken, categorie, sorteren, tota
                     {sortOptions.map(opt => (
                       <Link
                         key={opt.value}
-                        href={buildUrl({ categorie, zoeken: query.trim(), sorteren: opt.value })}
+                        href={buildUrl({ ...filters, sorteren: opt.value })}
                         onClick={() => setSortOpen(false)}
                         className={cn(
                           'flex items-center justify-between px-4 py-3 text-sm font-semibold transition-colors',
-                          (sorteren || 'nieuwst') === opt.value
+                          (filters.sorteren || 'nieuwst') === opt.value
                             ? 'text-brand-600 bg-brand-50'
                             : 'text-neutral-700 hover:bg-neutral-50'
                         )}
                       >
                         {opt.label}
-                        {(sorteren || 'nieuwst') === opt.value && (
+                        {(filters.sorteren || 'nieuwst') === opt.value && (
                           <span className="w-1.5 h-1.5 rounded-full bg-brand-500" />
                         )}
                       </Link>
@@ -158,50 +401,70 @@ export function Winkel2FilterBar({ categories, zoeken, categorie, sorteren, tota
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Mobile filter bar */}
-        <div className="flex md:hidden flex-col gap-3 py-3">
-          {/* Search */}
-          <form onSubmit={handleSearch} className="relative">
-            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-400 pointer-events-none" />
-            <input
-              type="text"
-              value={query}
-              onChange={e => setQuery(e.target.value)}
-              placeholder="Zoek een product..."
-              className="w-full pl-10 pr-10 py-3 text-sm font-medium bg-white border border-brand-100 rounded-2xl focus:outline-none focus:border-brand-400 transition-all"
+      {/* Main content: sidebar + grid */}
+      <div className="container-brand py-8">
+        <div className="flex gap-8 items-start">
+          {/* Desktop filter sidebar */}
+          <aside className="hidden lg:block w-56 flex-shrink-0 sticky top-20">
+            <FilterPanel
+              categories={categories}
+              filters={filters}
+              maxProductPrice={maxProductPrice}
             />
-            {query && (
-              <button type="button" onClick={() => { setQuery(''); window.location.href = buildUrl({ categorie, sorteren }) }} className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400">
-                <X className="h-4 w-4" />
-              </button>
-            )}
-          </form>
+          </aside>
 
-          {/* Category pills row + sort */}
-          <div className="flex items-center gap-2">
-            <div className="flex items-center gap-2 flex-1 overflow-x-auto scrollbar-hide">
-              <Link href={buildUrl({ sorteren })} className={cn('shrink-0 px-4 py-2 rounded-full text-xs font-bold border transition-all', !categorie ? 'bg-brand-500 text-white border-brand-500' : 'bg-white text-neutral-600 border-neutral-200')}>Alles</Link>
-              {categories.map(cat => (
-                <Link key={cat.id} href={buildUrl({ categorie: cat.slug, sorteren })} className={cn('shrink-0 px-4 py-2 rounded-full text-xs font-bold border transition-all', categorie === cat.slug ? 'bg-brand-500 text-white border-brand-500' : 'bg-white text-neutral-600 border-neutral-200')}>{cat.name}</Link>
-              ))}
-            </div>
-            <select
-              defaultValue={sorteren || 'nieuwst'}
-              onChange={e => { window.location.href = buildUrl({ categorie, zoeken: query, sorteren: e.target.value }) }}
-              className="shrink-0 text-xs font-bold text-neutral-700 bg-white border border-brand-100 rounded-xl px-2 py-2 outline-none"
-            >
-              {sortOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-            </select>
+          {/* Product grid */}
+          <div className="flex-1 min-w-0">
+            <Winkel2Grid products={products} zoeken={filters.zoeken} />
           </div>
         </div>
       </div>
-    </div>
+
+      {/* Mobile filter drawer */}
+      <AnimatePresence>
+        {mobileFiltersOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 lg:hidden"
+          >
+            {/* Backdrop */}
+            <div className="absolute inset-0 bg-black/40" onClick={() => setMobileFiltersOpen(false)} />
+
+            {/* Drawer */}
+            <motion.div
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+              className="absolute inset-y-0 left-0 w-80 bg-white shadow-2xl overflow-y-auto"
+            >
+              <div className="flex items-center justify-between p-5 border-b border-neutral-100">
+                <h2 className="font-black text-neutral-800">Filters</h2>
+                <button onClick={() => setMobileFiltersOpen(false)} className="p-2 rounded-full hover:bg-neutral-100 transition-colors">
+                  <X className="h-5 w-5 text-neutral-500" />
+                </button>
+              </div>
+              <div className="p-5">
+                <FilterPanel
+                  categories={categories}
+                  filters={filters}
+                  maxProductPrice={maxProductPrice}
+                />
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   )
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// PREMIUM PRODUCT CARD
+// PRODUCT CARD
 // ─────────────────────────────────────────────────────────────────────────────
 
 function PremiumProductCard({ product, index }: { product: Product; index: number }) {
@@ -210,7 +473,6 @@ function PremiumProductCard({ product, index }: { product: Product; index: numbe
   const discountPercent = hasDiscount
     ? Math.round(((product.compare_at_price! - product.price) / product.compare_at_price!) * 100)
     : 0
-  const hasPersonalization = (product.personalization_fields?.length ?? 0) > 0
 
   return (
     <motion.div
@@ -219,7 +481,6 @@ function PremiumProductCard({ product, index }: { product: Product; index: numbe
       transition={{ duration: 0.4, delay: index * 0.06, ease: [0.25, 0.46, 0.45, 0.94] }}
     >
       <Link href={`/product/${product.slug}`} className="group block">
-        {/* Image container */}
         <div className="relative overflow-hidden rounded-2xl mb-4 bg-gradient-to-br from-brand-50 to-peach-50" style={{ aspectRatio: '1/1' }}>
           {primaryImage ? (
             <Image
@@ -236,22 +497,16 @@ function PremiumProductCard({ product, index }: { product: Product; index: numbe
             </div>
           )}
 
-          {/* Overlay on hover */}
           <div className="absolute inset-0 bg-brand-900/0 group-hover:bg-brand-900/20 transition-all duration-500" />
 
-          {/* Sold out overlay */}
           {product.is_sold_out && (
             <div className="absolute inset-0 z-10 flex items-center justify-center bg-white/50">
-              <span
-                className="text-2xl font-extrabold text-neutral-700/70 tracking-widest uppercase rotate-[-20deg] select-none"
-                style={{ textShadow: '0 1px 2px rgba(0,0,0,0.1)' }}
-              >
+              <span className="text-2xl font-extrabold text-neutral-700/70 tracking-widest uppercase rotate-[-20deg] select-none" style={{ textShadow: '0 1px 2px rgba(0,0,0,0.1)' }}>
                 Uitverkocht
               </span>
             </div>
           )}
 
-          {/* CTA on hover */}
           <div className="absolute inset-x-4 bottom-4 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
             <div className="bg-white rounded-xl px-4 py-3 flex items-center justify-between shadow-hover">
               <span className="text-xs font-bold text-brand-600">Bekijk product</span>
@@ -259,14 +514,13 @@ function PremiumProductCard({ product, index }: { product: Product; index: numbe
             </div>
           </div>
 
-          {/* Top badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-1.5">
-            {hasDiscount && (
+            {(product.is_sale || hasDiscount) && (
               <span className="px-2.5 py-1 rounded-full text-xs font-black bg-peach-400 text-white shadow-sm">
-                −{discountPercent}%
+                {hasDiscount ? `−${discountPercent}%` : 'Sale'}
               </span>
             )}
-            {product.is_featured && !hasDiscount && (
+            {product.is_featured && !(product.is_sale || hasDiscount) && (
               <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-white/95 text-brand-600 shadow-sm backdrop-blur-sm">
                 <Sparkles className="h-2.5 w-2.5" />
                 Favoriet
@@ -274,8 +528,7 @@ function PremiumProductCard({ product, index }: { product: Product; index: numbe
             )}
           </div>
 
-          {/* Personaliseerbaar badge */}
-          {hasPersonalization && (
+          {product.is_personalizable && (
             <div className="absolute top-3 right-3">
               <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-brand-500/90 text-white backdrop-blur-sm">
                 ✦ Op naam
@@ -284,7 +537,6 @@ function PremiumProductCard({ product, index }: { product: Product; index: numbe
           )}
         </div>
 
-        {/* Product info */}
         <div className="px-1">
           <h3 className="font-bold text-neutral-800 text-sm leading-snug mb-2 group-hover:text-brand-600 transition-colors line-clamp-2">
             {product.name}
@@ -329,7 +581,7 @@ export function Winkel2Grid({ products, zoeken }: ProductGridProps) {
           {zoeken ? `Niets gevonden voor "${zoeken}"` : 'Geen producten gevonden'}
         </h3>
         <p className="text-neutral-500 text-sm mb-6 max-w-xs">
-          Probeer een andere zoekterm of bekijk onze volledige collectie.
+          Probeer andere filters of bekijk onze volledige collectie.
         </p>
         <Link
           href="/collecties"

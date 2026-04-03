@@ -45,6 +45,8 @@ export interface Product {
   is_active: boolean
   is_featured: boolean
   is_sold_out: boolean
+  is_personalizable: boolean
+  is_sale: boolean
   stock_quantity: number | null
   track_inventory: boolean
   meta_title: string | null
