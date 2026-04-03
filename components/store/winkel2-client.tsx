@@ -18,8 +18,8 @@ interface Filters {
   zoeken: string
   categorieen: string[]   // category ids
   sorteren: string
-  personaliseren: boolean
-  sale: boolean
+  personaliseren: boolean | null
+  sale: boolean | null
   prijs_min: number
   prijs_max: number
 }
@@ -39,22 +39,22 @@ function filtersToUrl(f: Filters, maxPrice: number): string {
   if (f.zoeken)                   p.set('zoeken', f.zoeken)
   if (f.categorieen.length > 0)   p.set('categorieen', f.categorieen.join(','))
   if (f.sorteren !== 'nieuwst')   p.set('sorteren', f.sorteren)
-  if (f.personaliseren)           p.set('personaliseren', '1')
-  if (f.sale)                     p.set('sale', '1')
+  if (f.personaliseren !== null)  p.set('personaliseren', f.personaliseren ? '1' : '0')
+  if (f.sale !== null)            p.set('sale', f.sale ? '1' : '0')
   if (f.prijs_min > 0)            p.set('prijs_min', String(f.prijs_min))
   if (f.prijs_max < maxPrice)     p.set('prijs_max', String(f.prijs_max))
   return `/collecties${p.toString() ? `?${p.toString()}` : ''}`
 }
 
 function urlToFilters(maxPrice: number): Filters {
-  if (typeof window === 'undefined') return { zoeken: '', categorieen: [], sorteren: 'nieuwst', personaliseren: false, sale: false, prijs_min: 0, prijs_max: maxPrice }
+  if (typeof window === 'undefined') return { zoeken: '', categorieen: [], sorteren: 'nieuwst', personaliseren: null, sale: null, prijs_min: 0, prijs_max: maxPrice }
   const p = new URLSearchParams(window.location.search)
   return {
     zoeken:        p.get('zoeken') ?? '',
     categorieen:   p.get('categorieen') ? p.get('categorieen')!.split(',').filter(Boolean) : [],
     sorteren:      p.get('sorteren') ?? 'nieuwst',
-    personaliseren: p.get('personaliseren') === '1',
-    sale:          p.get('sale') === '1',
+    personaliseren: p.has('personaliseren') ? p.get('personaliseren') === '1' : null,
+    sale:          p.has('sale') ? p.get('sale') === '1' : null,
     prijs_min:     p.get('prijs_min') ? parseFloat(p.get('prijs_min')!) : 0,
     prijs_max:     p.get('prijs_max') ? parseFloat(p.get('prijs_max')!) : maxPrice,
   }
@@ -129,16 +129,27 @@ function PriceSlider({ min, max, valueMin, valueMax, onChange }: PriceSliderProp
 // TOGGLE
 // ─────────────────────────────────────────────────────────────────────────────
 
-function Toggle({ checked, onChange, label }: { checked: boolean; onChange: (v: boolean) => void; label: string }) {
+function JaNee({ value, onChange, label }: { value: boolean | null; onChange: (v: boolean | null) => void; label: string }) {
   return (
-    <button onClick={() => onChange(!checked)} className="flex items-center justify-between w-full py-0.5 group">
-      <span className={cn('text-sm font-medium transition-colors', checked ? 'text-neutral-900' : 'text-neutral-600 group-hover:text-neutral-800')}>
-        {label}
-      </span>
-      <div className={cn('relative w-10 h-5 rounded-full transition-colors duration-200 flex-shrink-0 ml-3', checked ? 'bg-brand-500' : 'bg-neutral-200')}>
-        <div className={cn('absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-transform duration-200', checked ? 'translate-x-5' : 'translate-x-0.5')} />
+    <div>
+      <p className="text-sm font-medium text-neutral-700 mb-2">{label}</p>
+      <div className="flex gap-2">
+        {([['Ja', true], ['Nee', false]] as const).map(([tekst, val]) => (
+          <button
+            key={tekst}
+            onClick={() => onChange(value === val ? null : val)}
+            className={cn(
+              'px-4 py-1.5 rounded-lg text-sm font-semibold border transition-all',
+              value === val
+                ? 'bg-brand-500 text-white border-brand-500'
+                : 'bg-white text-neutral-600 border-neutral-200 hover:border-brand-300'
+            )}
+          >
+            {tekst}
+          </button>
+        ))}
       </div>
-    </button>
+    </div>
   )
 }
 
@@ -161,14 +172,14 @@ function FilterPanel({ categories, filters, maxProductPrice, onChange }: FilterP
     onChange({ ...filters, categorieen: next })
   }
 
-  const hasActiveFilters = filters.categorieen.length > 0 || filters.personaliseren || filters.sale ||
+  const hasActiveFilters = filters.categorieen.length > 0 || filters.personaliseren !== null || filters.sale !== null ||
     filters.prijs_min > 0 || filters.prijs_max < maxProductPrice
 
   return (
     <div className="space-y-6">
       {hasActiveFilters && (
         <button
-          onClick={() => onChange({ ...filters, categorieen: [], personaliseren: false, sale: false, prijs_min: 0, prijs_max: maxProductPrice })}
+          onClick={() => onChange({ ...filters, categorieen: [], personaliseren: null, sale: null, prijs_min: 0, prijs_max: maxProductPrice })}
           className="flex items-center gap-1.5 text-xs font-bold text-brand-500 hover:text-brand-600 transition-colors"
         >
           <X className="h-3.5 w-3.5" />
@@ -219,12 +230,12 @@ function FilterPanel({ categories, filters, maxProductPrice, onChange }: FilterP
 
       <div className="h-px bg-neutral-100" />
 
-      {/* Toggles */}
+      {/* Ja/Nee filters */}
       <div>
         <h3 className="text-xs font-black text-neutral-400 uppercase tracking-widest mb-3">Eigenschappen</h3>
-        <div className="space-y-3">
-          <Toggle label="Personaliseerbaar" checked={filters.personaliseren} onChange={v => onChange({ ...filters, personaliseren: v })} />
-          <Toggle label="Sale" checked={filters.sale} onChange={v => onChange({ ...filters, sale: v })} />
+        <div className="space-y-4">
+          <JaNee label="Personaliseerbaar" value={filters.personaliseren} onChange={v => onChange({ ...filters, personaliseren: v })} />
+          <JaNee label="Sale" value={filters.sale} onChange={v => onChange({ ...filters, sale: v })} />
         </div>
       </div>
     </div>
@@ -266,12 +277,12 @@ export function CollectiesLayout({ allProducts, categories, maxProductPrice }: C
       result = result.filter(p => filters.categorieen.some(id => p.category_ids.includes(id)))
     }
 
-    if (filters.personaliseren) {
-      result = result.filter(p => p.is_personalizable)
+    if (filters.personaliseren !== null) {
+      result = result.filter(p => p.is_personalizable === filters.personaliseren)
     }
 
-    if (filters.sale) {
-      result = result.filter(p => p.is_sale)
+    if (filters.sale !== null) {
+      result = result.filter(p => p.is_sale === filters.sale)
     }
 
     result = result.filter(p => p.price >= filters.prijs_min && p.price <= filters.prijs_max)
@@ -288,8 +299,8 @@ export function CollectiesLayout({ allProducts, categories, maxProductPrice }: C
 
   const activeFilterCount =
     filters.categorieen.length +
-    (filters.personaliseren ? 1 : 0) +
-    (filters.sale ? 1 : 0) +
+    (filters.personaliseren !== null ? 1 : 0) +
+    (filters.sale !== null ? 1 : 0) +
     (filters.prijs_min > 0 || filters.prijs_max < maxProductPrice ? 1 : 0)
 
   const activeSort = sortOptions.find(o => o.value === filters.sorteren) ?? sortOptions[0]
