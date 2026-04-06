@@ -25,6 +25,7 @@ const schema = z.object({
   description: z.string().optional(),
   price: z.coerce.number().min(0.01, 'Prijs moet groter zijn dan 0'),
   compare_at_price: z.coerce.number().min(0).optional().nullable(),
+  cost_price: z.coerce.number().min(0).optional().nullable(),
   is_active: z.boolean(),
   is_featured: z.boolean(),
   is_sold_out: z.boolean(),
@@ -129,6 +130,7 @@ export default function ProductEditPage() {
         setValue('description', p.description ?? '')
         setValue('price', p.price)
         setValue('compare_at_price', p.compare_at_price ?? null)
+        setValue('cost_price', p.cost_price ?? null)
         setValue('is_active', p.is_active)
         setValue('is_featured', p.is_featured)
         setValue('is_sold_out', p.is_sold_out)
@@ -150,6 +152,7 @@ export default function ProductEditPage() {
     const payload = {
       ...data,
       compare_at_price: data.compare_at_price || null,
+      cost_price: data.cost_price || null,
       stock_quantity: data.track_inventory ? (data.stock_quantity ?? null) : null,
       // Primary category = first selected (for backwards compat with breadcrumbs/display)
       category_id: selectedCategoryIds[0] ?? null,
@@ -334,6 +337,13 @@ export default function ProductEditPage() {
               step="0.01"
               helpText="Optioneel — toont doorgestreepte prijs"
               {...register('compare_at_price')}
+            />
+            <Input
+              label="Inkoopprijs (€)"
+              type="number"
+              step="0.01"
+              helpText="Optioneel — alleen zichtbaar voor jou als admin"
+              {...register('cost_price')}
             />
           </div>
 

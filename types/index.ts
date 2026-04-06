@@ -41,6 +41,7 @@ export interface Product {
   short_description: string | null
   price: number
   compare_at_price: number | null
+  cost_price: number | null
   category_id: string | null
   is_active: boolean
   is_featured: boolean
