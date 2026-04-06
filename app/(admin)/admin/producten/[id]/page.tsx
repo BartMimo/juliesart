@@ -30,6 +30,8 @@ const schema = z.object({
   is_sold_out: z.boolean(),
   is_personalizable: z.boolean(),
   is_sale: z.boolean(),
+  track_inventory: z.boolean(),
+  stock_quantity: z.coerce.number().int().optional().nullable(),
   meta_title: z.string().optional(),
   meta_description: z.string().optional(),
 })
@@ -53,11 +55,12 @@ export default function ProductEditPage() {
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema),
-    defaultValues: { is_active: true, is_featured: false, is_sold_out: false, is_personalizable: false, is_sale: false },
+    defaultValues: { is_active: true, is_featured: false, is_sold_out: false, is_personalizable: false, is_sale: false, track_inventory: false, stock_quantity: null },
   })
 
   const nameValue = watch('name')
   const slugValue = watch('slug')
+  const trackInventory = watch('track_inventory')
 
   // Auto-generate slug from name when it's still a concept slug
   useEffect(() => {
@@ -131,6 +134,8 @@ export default function ProductEditPage() {
         setValue('is_sold_out', p.is_sold_out)
         setValue('is_personalizable', p.is_personalizable ?? false)
         setValue('is_sale', p.is_sale ?? false)
+        setValue('track_inventory', p.track_inventory ?? false)
+        setValue('stock_quantity', p.stock_quantity ?? null)
         setValue('meta_title', p.meta_title ?? '')
         setValue('meta_description', p.meta_description ?? '')
       }
@@ -145,6 +150,7 @@ export default function ProductEditPage() {
     const payload = {
       ...data,
       compare_at_price: data.compare_at_price || null,
+      stock_quantity: data.track_inventory ? (data.stock_quantity ?? null) : null,
       // Primary category = first selected (for backwards compat with breadcrumbs/display)
       category_id: selectedCategoryIds[0] ?? null,
     }
@@ -329,6 +335,27 @@ export default function ProductEditPage() {
               helpText="Optioneel — toont doorgestreepte prijs"
               {...register('compare_at_price')}
             />
+          </div>
+
+          {/* Inventory */}
+          <div className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6 space-y-4">
+            <h2 className="font-bold text-neutral-800">Voorraad</h2>
+            <label className="flex items-center gap-3 cursor-pointer">
+              <input type="checkbox" className="w-4 h-4 accent-brand-500" {...register('track_inventory')} />
+              <div>
+                <span className="text-sm font-semibold text-neutral-700">Voorraad bijhouden</span>
+                <p className="text-xs text-neutral-400">Bijhouden hoeveel er op voorraad is</p>
+              </div>
+            </label>
+            {trackInventory && (
+              <Input
+                label="Aantal op voorraad"
+                type="number"
+                step="1"
+                helpText="Loopt automatisch af bij bestellingen. Bestellen blijft mogelijk bij 0 of lager."
+                {...register('stock_quantity')}
+              />
+            )}
           </div>
 
           {/* Category + status */}

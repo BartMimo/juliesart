@@ -44,6 +44,7 @@ export default async function AdminProductenPage() {
               <th className="text-left px-5 py-3.5 font-semibold text-neutral-500 text-xs uppercase tracking-wide">Product</th>
               <th className="text-left px-4 py-3.5 font-semibold text-neutral-500 text-xs uppercase tracking-wide hidden sm:table-cell">Categorie</th>
               <th className="text-left px-4 py-3.5 font-semibold text-neutral-500 text-xs uppercase tracking-wide">Prijs</th>
+              <th className="text-left px-4 py-3.5 font-semibold text-neutral-500 text-xs uppercase tracking-wide hidden lg:table-cell">Voorraad</th>
               <th className="text-left px-4 py-3.5 font-semibold text-neutral-500 text-xs uppercase tracking-wide hidden md:table-cell">Status</th>
               <th className="text-right px-5 py-3.5 font-semibold text-neutral-500 text-xs uppercase tracking-wide">Acties</th>
             </tr>
@@ -78,6 +79,21 @@ export default async function AdminProductenPage() {
                   </td>
                   <td className="px-4 py-4">
                     <span className="font-semibold text-neutral-800">{formatPrice(product.price)}</span>
+                  </td>
+                  <td className="px-4 py-4 hidden lg:table-cell">
+                    {product.track_inventory ? (
+                      <span className={`font-semibold tabular-nums ${
+                        (product.stock_quantity ?? 0) <= 0
+                          ? 'text-red-600'
+                          : (product.stock_quantity ?? 0) < 5
+                          ? 'text-amber-600'
+                          : 'text-neutral-800'
+                      }`}>
+                        {product.stock_quantity ?? 0}
+                      </span>
+                    ) : (
+                      <span className="text-neutral-400 text-xs">—</span>
+                    )}
                   </td>
                   <td className="px-4 py-4 hidden md:table-cell">
                     <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${

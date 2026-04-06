@@ -145,6 +145,14 @@ export async function POST(request: NextRequest) {
         .select()
         .single()
 
+      // Decrement stock atomically (only if track_inventory = true)
+      if (!itemError && item.productId) {
+        await supabase.rpc('decrement_product_stock', {
+          p_product_id: item.productId,
+          p_qty: item.quantity,
+        })
+      }
+
       if (!itemError && orderItem && item.personalizations?.length > 0) {
         await supabase.from('order_item_personalizations').insert(
           item.personalizations.map((p: {
