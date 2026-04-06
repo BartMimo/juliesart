@@ -26,6 +26,7 @@ const schema = z.object({
   price: z.coerce.number().min(0.01, 'Prijs moet groter zijn dan 0'),
   compare_at_price: z.coerce.number().min(0).optional().nullable(),
   cost_price: z.coerce.number().min(0).optional().nullable(),
+  purchase_url: z.string().url('Vul een geldige URL in').optional().or(z.literal('')),
   is_active: z.boolean(),
   is_featured: z.boolean(),
   is_sold_out: z.boolean(),
@@ -131,6 +132,7 @@ export default function ProductEditPage() {
         setValue('price', p.price)
         setValue('compare_at_price', p.compare_at_price ?? null)
         setValue('cost_price', p.cost_price ?? null)
+        setValue('purchase_url', p.purchase_url ?? '')
         setValue('is_active', p.is_active)
         setValue('is_featured', p.is_featured)
         setValue('is_sold_out', p.is_sold_out)
@@ -153,6 +155,7 @@ export default function ProductEditPage() {
       ...data,
       compare_at_price: data.compare_at_price || null,
       cost_price: data.cost_price || null,
+      purchase_url: data.purchase_url || null,
       stock_quantity: data.track_inventory ? (data.stock_quantity ?? null) : null,
       // Primary category = first selected (for backwards compat with breadcrumbs/display)
       category_id: selectedCategoryIds[0] ?? null,
@@ -345,6 +348,26 @@ export default function ProductEditPage() {
               helpText="Optioneel — alleen zichtbaar voor jou als admin"
               {...register('cost_price')}
             />
+            <div>
+              <Input
+                label="Inkooplink"
+                type="url"
+                placeholder="https://..."
+                helpText="Optioneel — link naar de leverancier voor dit product"
+                error={errors.purchase_url?.message}
+                {...register('purchase_url')}
+              />
+              {watch('purchase_url') && !errors.purchase_url && (
+                <a
+                  href={watch('purchase_url')}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block mt-1.5 text-xs text-brand-500 hover:text-brand-600 underline"
+                >
+                  Link openen ↗
+                </a>
+              )}
+            </div>
           </div>
 
           {/* Inventory */}

@@ -97,6 +97,7 @@ CREATE TABLE public.products (
   price               NUMERIC(10, 2) NOT NULL CHECK (price >= 0),
   compare_at_price    NUMERIC(10, 2) CHECK (compare_at_price >= 0),
   cost_price          NUMERIC(10, 2) CHECK (cost_price >= 0),
+  purchase_url        TEXT,
   category_id         UUID REFERENCES public.categories(id) ON DELETE SET NULL,
   is_active           BOOLEAN NOT NULL DEFAULT true,
   is_featured         BOOLEAN NOT NULL DEFAULT false,
