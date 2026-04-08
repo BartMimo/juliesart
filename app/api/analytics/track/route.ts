@@ -16,12 +16,20 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ ok: true })
     }
 
+    // Vercel provides city/country headers automatically on all plans
+    const city = request.headers.get('x-vercel-ip-city')
+      ? decodeURIComponent(request.headers.get('x-vercel-ip-city')!)
+      : null
+    const country = request.headers.get('x-vercel-ip-country') ?? null
+
     await supabase.from('page_views').insert({
       path,
       product_id: product_id ?? null,
       session_id: session_id ?? null,
       referrer: referrer ?? null,
       user_agent: request.headers.get('user-agent') ?? null,
+      city,
+      country,
     })
 
     return NextResponse.json({ ok: true })

@@ -334,6 +334,7 @@ CREATE TABLE public.page_views (
   user_id     UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
   referrer    TEXT,
   user_agent  TEXT,
+  city        TEXT,
   country     TEXT,
   created_at  TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -341,6 +342,7 @@ CREATE TABLE public.page_views (
 CREATE INDEX idx_page_views_path ON public.page_views(path);
 CREATE INDEX idx_page_views_product ON public.page_views(product_id);
 CREATE INDEX idx_page_views_created ON public.page_views(created_at DESC);
+CREATE INDEX idx_page_views_city ON public.page_views(city);
 -- Partial index for product page views
 CREATE INDEX idx_page_views_product_not_null ON public.page_views(product_id, created_at DESC)
   WHERE product_id IS NOT NULL;

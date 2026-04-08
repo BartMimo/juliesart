@@ -13,7 +13,9 @@ export const metadata: Metadata = {
 export default async function CollectiesPage() {
   const supabase = await createClient()
 
-  const [{ data: categoriesRaw }, { data: productsRaw }] = await Promise.all([
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
+
+  const [{ data: categoriesRaw }, { data: productsRaw }, { data: viewsRaw }] = await Promise.all([
     supabase.from('categories').select('*').eq('is_active', true).order('sort_order'),
     supabase.from('products').select(`
       *,
@@ -21,7 +23,17 @@ export default async function CollectiesPage() {
       personalization_fields(id),
       product_categories(category_id)
     `).eq('is_active', true).order('created_at', { ascending: false }),
+    supabase.from('page_views')
+      .select('product_id')
+      .not('product_id', 'is', null)
+      .gte('created_at', thirtyDaysAgo),
   ])
+
+  // Count views per product
+  const viewCounts = (viewsRaw ?? []).reduce((acc: Record<string, number>, row: { product_id: string }) => {
+    acc[row.product_id] = (acc[row.product_id] ?? 0) + 1
+    return acc
+  }, {})
 
   const categories = (categoriesRaw ?? []) as Category[]
   const products = (productsRaw ?? []).map(p => ({
@@ -29,7 +41,8 @@ export default async function CollectiesPage() {
     personalization_fields: p.personalization_fields ?? [],
     // Flatten category ids for easy client-side filtering
     category_ids: (p.product_categories ?? []).map((pc: { category_id: string }) => pc.category_id),
-  })) as (Product & { category_ids: string[] })[]
+    view_count: viewCounts[p.id] ?? 0,
+  })) as (Product & { category_ids: string[]; view_count: number })[]
 
   const maxProductPrice = products.length > 0
     ? Math.ceil(Math.max(...products.map(p => p.price)) / 10) * 10

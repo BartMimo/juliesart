@@ -6,6 +6,34 @@ import { formatPrice } from '@/lib/utils'
 
 export const metadata: Metadata = { title: 'Analytics' }
 
+function parseReferrer(referrer: string | null): string {
+  if (!referrer) return 'Direct / Bookmark'
+  try {
+    const hostname = new URL(referrer).hostname.replace(/^www\./, '')
+    const known: Record<string, string> = {
+      'google.com': 'Google',
+      'google.nl': 'Google',
+      'google.be': 'Google',
+      'instagram.com': 'Instagram',
+      'l.instagram.com': 'Instagram',
+      'facebook.com': 'Facebook',
+      'm.facebook.com': 'Facebook',
+      'l.facebook.com': 'Facebook',
+      'pinterest.com': 'Pinterest',
+      'nl.pinterest.com': 'Pinterest',
+      'twitter.com': 'Twitter / X',
+      'x.com': 'Twitter / X',
+      't.co': 'Twitter / X',
+      'etsy.com': 'Etsy',
+      'bing.com': 'Bing',
+      'duckduckgo.com': 'DuckDuckGo',
+    }
+    return known[hostname] ?? hostname
+  } catch {
+    return 'Onbekend'
+  }
+}
+
 export default async function AdminAnalyticsPage() {
   const supabase = await createClient()
 
@@ -17,7 +45,7 @@ export default async function AdminAnalyticsPage() {
     { count: totalCustomers },
     { count: totalProducts },
     { data: revenueData },
-    { data: topPathsData },
+    { data: pageViewsData },
     { data: topProductsData },
   ] = await Promise.all([
     supabase.from('page_views').select('*', { count: 'exact', head: true }).gte('created_at', thirtyDaysAgo),
@@ -31,9 +59,9 @@ export default async function AdminAnalyticsPage() {
       .neq('status', 'cancelled')
       .gte('created_at', thirtyDaysAgo)
       .order('created_at'),
-    // Top pages
+    // Page views with referrer and location
     supabase.from('page_views')
-      .select('path')
+      .select('path, referrer, city, country')
       .gte('created_at', thirtyDaysAgo),
     // Top products by order items
     supabase.from('order_items')
@@ -55,14 +83,29 @@ export default async function AdminAnalyticsPage() {
     .sort(([a], [b]) => a.localeCompare(b))
     .map(([date, d]) => ({ date, ...d }))
 
-  // Top paths
-  const pathCounts = (topPathsData ?? []).reduce((acc: Record<string, number>, pv: { path: string }) => {
+  // All pages sorted by views
+  const pathCounts = (pageViewsData ?? []).reduce((acc: Record<string, number>, pv: { path: string }) => {
     acc[pv.path] = (acc[pv.path] ?? 0) + 1
     return acc
   }, {})
-  const topPaths = Object.entries(pathCounts)
-    .sort(([, a], [, b]) => b - a)
-    .slice(0, 10)
+  const allPaths = Object.entries(pathCounts).sort(([, a], [, b]) => b - a)
+
+  // Locations (city + country)
+  const locationCounts = (pageViewsData ?? []).reduce((acc: Record<string, number>, pv: { city: string | null; country: string | null }) => {
+    if (!pv.city) return acc
+    const label = pv.country ? `${pv.city}, ${pv.country}` : pv.city
+    acc[label] = (acc[label] ?? 0) + 1
+    return acc
+  }, {})
+  const topLocations = Object.entries(locationCounts).sort(([, a], [, b]) => b - a)
+
+  // Traffic sources
+  const sourceCounts = (pageViewsData ?? []).reduce((acc: Record<string, number>, pv: { referrer: string | null }) => {
+    const source = parseReferrer(pv.referrer)
+    acc[source] = (acc[source] ?? 0) + 1
+    return acc
+  }, {})
+  const trafficSources = Object.entries(sourceCounts).sort(([, a], [, b]) => b - a)
 
   // Top products
   const productStats = (topProductsData ?? []).reduce((acc: Record<string, { total_sold: number; revenue: number }>, item: { product_name: string; quantity: number; total_price: number }) => {
@@ -118,20 +161,20 @@ export default async function AdminAnalyticsPage() {
           )}
         </div>
 
-        {/* Top pages */}
+        {/* Locations */}
         <div className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6">
-          <h2 className="font-bold text-neutral-800 text-lg mb-6">Meest bezochte pagina's</h2>
-          {topPaths.length > 0 ? (
+          <h2 className="font-bold text-neutral-800 text-lg mb-6">Locaties</h2>
+          {topLocations.length > 0 ? (
             <div className="space-y-3">
-              {topPaths.map(([path, views], index) => (
-                <div key={path} className="flex items-center gap-3">
+              {topLocations.slice(0, 10).map(([location, views], index) => (
+                <div key={location} className="flex items-center gap-3">
                   <span className="text-xs font-bold text-neutral-400 w-5">{index + 1}</span>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-neutral-700 truncate">{path || '/'}</p>
+                    <p className="text-sm font-medium text-neutral-700 truncate">{location}</p>
                     <div className="mt-1 h-1.5 bg-neutral-100 rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-brand-400 rounded-full"
-                        style={{ width: `${(views / topPaths[0][1]) * 100}%` }}
+                        className="h-full bg-mint-400 rounded-full"
+                        style={{ width: `${(views / topLocations[0][1]) * 100}%` }}
                       />
                     </div>
                   </div>
@@ -141,10 +184,69 @@ export default async function AdminAnalyticsPage() {
             </div>
           ) : (
             <div className="h-[280px] flex items-center justify-center text-neutral-400 text-sm">
-              Nog geen paginaweergave data
+              Nog geen locatiedata — beschikbaar na eerste bezoek via Vercel
             </div>
           )}
         </div>
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Traffic sources */}
+        <div className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6">
+          <h2 className="font-bold text-neutral-800 text-lg mb-6">Verkeersbronnen</h2>
+          {trafficSources.length > 0 ? (
+            <div className="space-y-3">
+              {trafficSources.map(([source, views], index) => (
+                <div key={source} className="flex items-center gap-3">
+                  <span className="text-xs font-bold text-neutral-400 w-5">{index + 1}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-neutral-700 truncate">{source}</p>
+                    <div className="mt-1 h-1.5 bg-neutral-100 rounded-full overflow-hidden">
+                      <div
+                        className="h-full bg-peach-400 rounded-full"
+                        style={{ width: `${(views / trafficSources[0][1]) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                  <span className="text-sm font-bold text-neutral-600 shrink-0">{views}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="h-[280px] flex items-center justify-center text-neutral-400 text-sm">
+              Nog geen verkeersdata
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* All pages */}
+      <div className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6">
+        <h2 className="font-bold text-neutral-800 text-lg mb-1">Alle pagina's</h2>
+        <p className="text-neutral-400 text-sm mb-6">{allPaths.length} pagina{allPaths.length !== 1 ? "'s" : ''} bezocht in de afgelopen 30 dagen</p>
+        {allPaths.length > 0 ? (
+          <div className="divide-y divide-neutral-50">
+            {allPaths.map(([path, views], index) => (
+              <div key={path} className="flex items-center gap-3 py-2.5">
+                <span className="text-xs font-bold text-neutral-300 w-6 shrink-0">{index + 1}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-neutral-700 truncate">{path || '/'}</p>
+                  <div className="mt-1 h-1 bg-neutral-100 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-brand-400 rounded-full"
+                      style={{ width: `${(views / allPaths[0][1]) * 100}%` }}
+                    />
+                  </div>
+                </div>
+                <span className="text-sm font-bold text-neutral-600 shrink-0 tabular-nums">{views}</span>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="py-12 flex items-center justify-center text-neutral-400 text-sm">
+            Nog geen paginaweergave data
+          </div>
+        )}
       </div>
     </div>
   )

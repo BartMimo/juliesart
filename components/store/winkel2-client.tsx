@@ -12,7 +12,7 @@ import { formatPrice, cn } from '@/lib/utils'
 // TYPES
 // ─────────────────────────────────────────────────────────────────────────────
 
-type ProductWithCats = Product & { category_ids: string[] }
+type ProductWithCats = Product & { category_ids: string[]; view_count: number }
 
 interface Filters {
   zoeken: string
@@ -38,7 +38,7 @@ function filtersToUrl(f: Filters, maxPrice: number): string {
   const p = new URLSearchParams()
   if (f.zoeken)                   p.set('zoeken', f.zoeken)
   if (f.categorieen.length > 0)   p.set('categorieen', f.categorieen.join(','))
-  if (f.sorteren !== 'nieuwst')   p.set('sorteren', f.sorteren)
+  if (f.sorteren !== 'populariteit') p.set('sorteren', f.sorteren)
   if (f.personaliseren !== null)  p.set('personaliseren', f.personaliseren ? '1' : '0')
   if (f.sale !== null)            p.set('sale', f.sale ? '1' : '0')
   if (f.prijs_min > 0)            p.set('prijs_min', String(f.prijs_min))
@@ -47,12 +47,12 @@ function filtersToUrl(f: Filters, maxPrice: number): string {
 }
 
 function urlToFilters(maxPrice: number): Filters {
-  if (typeof window === 'undefined') return { zoeken: '', categorieen: [], sorteren: 'nieuwst', personaliseren: null, sale: null, prijs_min: 0, prijs_max: maxPrice }
+  if (typeof window === 'undefined') return { zoeken: '', categorieen: [], sorteren: 'populariteit', personaliseren: null, sale: null, prijs_min: 0, prijs_max: maxPrice }
   const p = new URLSearchParams(window.location.search)
   return {
     zoeken:        p.get('zoeken') ?? '',
     categorieen:   p.get('categorieen') ? p.get('categorieen')!.split(',').filter(Boolean) : [],
-    sorteren:      p.get('sorteren') ?? 'nieuwst',
+    sorteren:      p.get('sorteren') ?? 'populariteit',
     personaliseren: p.has('personaliseren') ? p.get('personaliseren') === '1' : null,
     sale:          p.has('sale') ? p.get('sale') === '1' : null,
     prijs_min:     p.get('prijs_min') ? parseFloat(p.get('prijs_min')!) : 0,
@@ -65,9 +65,10 @@ function urlToFilters(maxPrice: number): Filters {
 // ─────────────────────────────────────────────────────────────────────────────
 
 const sortOptions = [
-  { value: 'nieuwst',    label: 'Nieuwst' },
-  { value: 'prijs-laag', label: 'Prijs oplopend' },
-  { value: 'prijs-hoog', label: 'Prijs aflopend' },
+  { value: 'populariteit', label: 'Populariteit' },
+  { value: 'nieuwst',      label: 'Nieuwst' },
+  { value: 'prijs-laag',   label: 'Prijs oplopend' },
+  { value: 'prijs-hoog',   label: 'Prijs aflopend' },
   { value: 'naam',       label: 'Naam A–Z' },
 ]
 
@@ -288,10 +289,11 @@ export function CollectiesLayout({ allProducts, categories, maxProductPrice }: C
     result = result.filter(p => p.price >= filters.prijs_min && p.price <= filters.prijs_max)
 
     switch (filters.sorteren) {
-      case 'prijs-laag': return [...result].sort((a, b) => a.price - b.price)
-      case 'prijs-hoog': return [...result].sort((a, b) => b.price - a.price)
-      case 'naam':       return [...result].sort((a, b) => a.name.localeCompare(b.name))
-      default:           return result // already sorted by created_at desc from server
+      case 'populariteit': return [...result].sort((a, b) => b.view_count - a.view_count)
+      case 'prijs-laag':   return [...result].sort((a, b) => a.price - b.price)
+      case 'prijs-hoog':   return [...result].sort((a, b) => b.price - a.price)
+      case 'naam':         return [...result].sort((a, b) => a.name.localeCompare(b.name))
+      default:             return result // already sorted by created_at desc from server
     }
   }, [allProducts, filters])
 
