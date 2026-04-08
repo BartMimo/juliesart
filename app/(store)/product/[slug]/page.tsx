@@ -149,7 +149,7 @@ export default function ProductPage() {
     <div className="py-10">
       <div className="container-brand">
         {/* Breadcrumb */}
-        <nav className="text-sm text-neutral-400 mb-8 flex items-center gap-2 overflow-hidden">
+        <nav className="text-sm text-neutral-400 mb-8 flex items-center flex-wrap gap-2">
           <a href="/" className="hover:text-brand-500 transition-colors shrink-0">Home</a>
           <span className="shrink-0">/</span>
           <a href="/collecties" className="hover:text-brand-500 transition-colors shrink-0">Collecties</a>
@@ -219,14 +219,14 @@ export default function ProductPage() {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                    className="w-9 h-9 rounded-full border border-neutral-200 flex items-center justify-center hover:border-brand-400 transition-colors font-bold"
+                    className="w-11 h-11 rounded-full border border-neutral-200 flex items-center justify-center hover:border-brand-400 transition-colors font-bold text-lg"
                   >
                     −
                   </button>
-                  <span className="w-8 text-center font-bold text-neutral-800">{quantity}</span>
+                  <span className="w-9 text-center font-bold text-neutral-800">{quantity}</span>
                   <button
                     onClick={() => setQuantity((q) => Math.min(10, q + 1))}
-                    className="w-9 h-9 rounded-full border border-neutral-200 flex items-center justify-center hover:border-brand-400 transition-colors font-bold"
+                    className="w-11 h-11 rounded-full border border-neutral-200 flex items-center justify-center hover:border-brand-400 transition-colors font-bold text-lg"
                   >
                     +
                   </button>

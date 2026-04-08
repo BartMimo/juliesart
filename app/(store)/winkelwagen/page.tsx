@@ -109,7 +109,7 @@ export default function WinkelwagenPage() {
 
           {/* Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6 space-y-5 sticky top-24">
+            <div className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6 space-y-5 lg:sticky lg:top-24">
               <h2 className="font-bold text-neutral-800 text-lg">Besteloverzicht</h2>
 
               {/* Discount code */}

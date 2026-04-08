@@ -72,7 +72,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
 
           {/* Personalization badge */}
           {hasPersonalization && (
-            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/30 to-transparent p-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/30 to-transparent p-3 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300">
               <span className="text-xs font-semibold text-white">✦ Personaliseerbaar</span>
             </div>
           )}
@@ -80,7 +80,7 @@ export function ProductCard({ product, priority = false }: ProductCardProps) {
 
         {/* Info */}
         <div className="p-4">
-          <h3 className="font-bold text-neutral-800 text-sm leading-snug mb-2 line-clamp-2 group-hover:text-brand-600 transition-colors">
+          <h3 className="font-bold text-neutral-800 text-sm sm:text-sm leading-snug mb-2 line-clamp-2 group-hover:text-brand-600 transition-colors">
             {product.name}
           </h3>
           <div className="flex items-baseline gap-2">

@@ -313,7 +313,7 @@ function ColorField({ field, options, value, onChange, error }: FieldComponentPr
             type="button"
             onClick={() => onChange(option.value)}
             className={cn(
-              'relative w-10 h-10 rounded-full border-2 transition-all duration-200',
+              'relative w-12 h-12 rounded-full border-2 transition-all duration-200',
               value === option.value
                 ? 'border-neutral-800 scale-110 shadow-md'
                 : 'border-transparent hover:scale-105'
@@ -362,7 +362,7 @@ function FontField({
             >
               {/* Card */}
               <div className={cn(
-                'w-full h-14 rounded-xl border-2 flex items-center justify-center px-2 transition-all duration-200 overflow-hidden',
+                'w-full h-16 rounded-xl border-2 flex items-center justify-center px-2 transition-all duration-200 overflow-hidden',
                 isSelected
                   ? 'border-brand-500 bg-brand-50 shadow-[0_3px_12px_rgba(168,112,72,0.18)]'
                   : 'border-neutral-200 bg-white hover:border-brand-300 hover:bg-neutral-50'
@@ -416,7 +416,7 @@ function IconField({ field, options, value, onChange, error }: FieldComponentPro
   return (
     <div>
       <FieldLabel field={field} />
-      <div className="grid grid-cols-3 sm:grid-cols-6 gap-3 mt-2">
+      <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3 mt-2">
         {options.map((option) => (
           <button
             key={option.value}
@@ -459,7 +459,7 @@ function RadioField({ field, options, value, onChange, error }: FieldComponentPr
             type="button"
             onClick={() => onChange(option.value)}
             className={cn(
-              'px-4 py-2 rounded-xl border-2 text-sm font-semibold transition-all duration-200',
+              'px-4 py-3 rounded-xl border-2 text-sm font-semibold transition-all duration-200',
               value === option.value
                 ? 'border-brand-500 bg-brand-500 text-white'
                 : 'border-neutral-200 hover:border-brand-300 text-neutral-700 bg-white'

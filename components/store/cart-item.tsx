@@ -72,34 +72,34 @@ export function CartItemRow({ item }: CartItemRowProps) {
         {/* Price + quantity */}
         <div className="flex items-center justify-between mt-3">
           {/* Quantity controls */}
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1">
             <button
               onClick={() => updateQuantity(item.id, item.quantity - 1)}
-              className="w-7 h-7 rounded-full border border-neutral-200 flex items-center justify-center hover:border-brand-400 hover:text-brand-600 transition-colors"
+              className="w-10 h-10 rounded-full border border-neutral-200 flex items-center justify-center hover:border-brand-400 hover:text-brand-600 transition-colors"
             >
-              <Minus className="h-3 w-3" />
+              <Minus className="h-4 w-4" />
             </button>
-            <span className="w-6 text-center text-sm font-bold">{item.quantity}</span>
+            <span className="w-7 text-center text-sm font-bold">{item.quantity}</span>
             <button
               onClick={() => updateQuantity(item.id, item.quantity + 1)}
               disabled={item.quantity >= 10}
-              className="w-7 h-7 rounded-full border border-neutral-200 flex items-center justify-center hover:border-brand-400 hover:text-brand-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              className="w-10 h-10 rounded-full border border-neutral-200 flex items-center justify-center hover:border-brand-400 hover:text-brand-600 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             >
-              <Plus className="h-3 w-3" />
+              <Plus className="h-4 w-4" />
             </button>
           </div>
 
           {/* Price + remove */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <span className="font-bold text-sm text-neutral-800">
               {formatPrice(item.unitPrice * item.quantity)}
             </span>
             <button
               onClick={() => removeItem(item.id)}
-              className="p-1.5 rounded-full hover:bg-red-50 text-neutral-400 hover:text-red-500 transition-colors"
+              className="p-2.5 rounded-full hover:bg-red-50 text-neutral-400 hover:text-red-500 transition-colors"
               aria-label="Verwijderen"
             >
-              <Trash2 className="h-3.5 w-3.5" />
+              <Trash2 className="h-4 w-4" />
             </button>
           </div>
         </div>

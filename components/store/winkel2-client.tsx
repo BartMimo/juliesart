@@ -430,7 +430,7 @@ export function CollectiesLayout({ allProducts, categories, maxProductPrice }: C
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 30, stiffness: 300 }}
-              className="absolute inset-y-0 left-0 w-80 bg-white shadow-2xl overflow-y-auto"
+              className="absolute inset-y-0 left-0 w-[min(320px,85vw)] bg-white shadow-2xl overflow-y-auto"
             >
               <div className="flex items-center justify-between p-5 border-b border-neutral-100">
                 <h2 className="font-black text-neutral-800">Filters</h2>
@@ -498,7 +498,7 @@ function ProductCard({ product, index }: { product: ProductWithCats; index: numb
             </div>
           )}
 
-          <div className="absolute inset-x-4 bottom-4 translate-y-3 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300">
+          <div className="absolute inset-x-4 bottom-4 sm:translate-y-3 sm:opacity-0 sm:group-hover:translate-y-0 sm:group-hover:opacity-100 transition-all duration-300">
             <div className="bg-white rounded-xl px-4 py-3 flex items-center justify-between shadow-hover">
               <span className="text-xs font-bold text-brand-600">Bekijk product</span>
               <ArrowRight className="h-4 w-4 text-brand-500" />
@@ -528,8 +528,8 @@ function ProductCard({ product, index }: { product: ProductWithCats; index: numb
           )}
         </div>
 
-        <div className="px-1">
-          <h3 className="font-bold text-neutral-800 text-sm leading-snug mb-2 group-hover:text-brand-600 transition-colors line-clamp-2">
+        <div className="px-1 pt-2">
+          <h3 className="font-bold text-neutral-800 text-sm leading-snug mb-1.5 group-hover:text-brand-600 transition-colors line-clamp-2">
             {product.name}
           </h3>
           <div className="flex items-center gap-2">
@@ -578,7 +578,7 @@ function ProductGrid({ products, zoeken }: ProductGridProps) {
   }
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-5 gap-y-10">
+    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-3 gap-y-6 sm:gap-x-5 sm:gap-y-10">
       {products.map((product, index) => (
         <ProductCard key={product.id} product={product} index={index} />
       ))}

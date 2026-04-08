@@ -56,13 +56,13 @@ export function ProductImages({ images, productName }: ProductImagesProps) {
           <>
             <button
               onClick={prev}
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-card opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity hover:bg-white"
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-card opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity hover:bg-white"
             >
               <ChevronLeft className="h-5 w-5 text-neutral-600" />
             </button>
             <button
               onClick={next}
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-card opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity hover:bg-white"
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-card opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity hover:bg-white"
             >
               <ChevronRight className="h-5 w-5 text-neutral-600" />
             </button>
