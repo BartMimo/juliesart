@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { Instagram, Facebook, Heart } from 'lucide-react'
-import { INSTAGRAM_URL, FACEBOOK_URL } from '@/lib/constants'
+import { Instagram, Heart } from 'lucide-react'
+import { INSTAGRAM_URL } from '@/lib/constants'
 
 const footerLinks = {
   winkel: [
@@ -56,15 +56,6 @@ export function Footer() {
                 aria-label="Instagram"
               >
                 <Instagram className="h-4 w-4 text-brand-600" />
-              </a>
-              <a
-                href={FACEBOOK_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-brand-100 hover:bg-brand-200 flex items-center justify-center transition-colors"
-                aria-label="Facebook"
-              >
-                <Facebook className="h-4 w-4 text-brand-600" />
               </a>
             </div>
           </div>

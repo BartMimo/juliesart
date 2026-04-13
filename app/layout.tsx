@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Nunito } from 'next/font/google'
 import './globals.css'
 import { buildGoogleFontsUrl } from '@/lib/fonts'
-import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, INSTAGRAM_URL, FACEBOOK_URL, CONTACT_EMAIL } from '@/lib/constants'
+import { SITE_NAME, SITE_DESCRIPTION, SITE_URL, INSTAGRAM_URL, CONTACT_EMAIL } from '@/lib/constants'
 import { Toaster } from '@/components/ui/toaster'
 
 const nunito = Nunito({
@@ -112,7 +112,7 @@ const organizationSchema = {
   },
   description: SITE_DESCRIPTION,
   email: CONTACT_EMAIL,
-  sameAs: [INSTAGRAM_URL, FACEBOOK_URL],
+  sameAs: [INSTAGRAM_URL],
   contactPoint: {
     '@type': 'ContactPoint',
     email: CONTACT_EMAIL,
