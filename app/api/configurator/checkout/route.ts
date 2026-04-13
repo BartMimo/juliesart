@@ -52,8 +52,8 @@ export async function POST(request: NextRequest) {
         price_data: {
           currency: 'eur',
           product_data: {
-            name: `Gravure — ${product.name}`,
-            description: `Gravure op maat voor ${product.name}`,
+            name: `Eigen ontwerp — ${product.name}`,
+            description: `Eigen ontwerp op maat voor ${product.name}`,
           },
           unit_amount: Math.round(product.price * 100),
         },

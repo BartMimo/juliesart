@@ -18,12 +18,12 @@ export default function ConfiguratorSuccessPage() {
           Bestelling geplaatst!
         </h1>
         <p className="text-neutral-500 text-base leading-relaxed">
-          Bedankt voor je gravure-bestelling. Je ontvangt een bevestigingsmail met alle details.
-          We gaan direct aan de slag met jouw unieke gravure!
+          Bedankt voor je bestelling. Je ontvangt een bevestigingsmail met alle details.
+          We gaan direct aan de slag met jouw eigen ontwerp!
         </p>
         <div className="bg-amber-50 rounded-2xl p-5 border border-amber-100 text-sm text-amber-800">
           <p className="font-semibold mb-1">Wat nu?</p>
-          <p>Zodra je betaling verwerkt is, beginnen we met de gravure. Je ontvangt een track &amp; trace wanneer je bestelling onderweg is.</p>
+          <p>Zodra je betaling verwerkt is, beginnen we met jouw eigen ontwerp. Je ontvangt een track &amp; trace wanneer je bestelling onderweg is.</p>
         </div>
         <div className="flex flex-col sm:flex-row gap-3 justify-center pt-2">
           <Button asChild>
@@ -34,7 +34,7 @@ export default function ConfiguratorSuccessPage() {
           </Button>
           <Button asChild variant="outline">
             <Link href="/configurator">
-              Nog een gravure maken
+              Nog een eigen ontwerp maken
             </Link>
           </Button>
         </div>

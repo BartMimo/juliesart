@@ -397,7 +397,7 @@ export default function ProductEditPage() {
           {/* Engraving area */}
           <div className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6 space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="font-bold text-neutral-800">Graveerzone</h2>
+              <h2 className="font-bold text-neutral-800">Ontwerp-zone</h2>
               <label className="flex items-center gap-2 cursor-pointer">
                 <input
                   type="checkbox"
@@ -405,13 +405,13 @@ export default function ProductEditPage() {
                   checked={!!engravingArea}
                   onChange={e => setEngravingArea(e.target.checked ? { x: 10, y: 10, width: 80, height: 80 } : null)}
                 />
-                <span className="text-xs font-semibold text-neutral-600">Gravure inschakelen</span>
+                <span className="text-xs font-semibold text-neutral-600">Eigen ontwerp inschakelen</span>
               </label>
             </div>
             {engravingArea ? (
               <div className="space-y-3">
                 <p className="text-xs text-neutral-400">
-                  Definieer het toegestane graveergebied als percentage van de afbeelding.
+                  Definieer het toegestane ontwerp-gebied als percentage van de afbeelding.
                 </p>
                 <div className="grid grid-cols-2 gap-3">
                   {(['x', 'y', 'width', 'height'] as const).map((field) => (
@@ -439,7 +439,7 @@ export default function ProductEditPage() {
               </div>
             ) : (
               <p className="text-xs text-neutral-400">
-                Schakel gravure in om dit product beschikbaar te maken in de gravure-configurator.
+                Schakel eigen ontwerp in om dit product beschikbaar te maken in de configurator.
               </p>
             )}
           </div>

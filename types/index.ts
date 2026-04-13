@@ -35,10 +35,11 @@ export interface Category {
 
 // Gravure configurator types
 export interface EngravingPosition {
-  x: number       // % van afbeeldingsbreedte
-  y: number       // % van afbeeldingshoogte
-  width: number   // % van afbeeldingsbreedte
-  height: number  // % van afbeeldingshoogte
+  x: number        // % van afbeeldingsbreedte
+  y: number        // % van afbeeldingshoogte
+  width: number    // % van afbeeldingsbreedte
+  height: number   // % van afbeeldingshoogte
+  rotation: number // graden (0-360), standaard 0
 }
 
 export interface Product {

@@ -172,12 +172,12 @@ export default async function AdminOrderDetailPage({ params }: Props) {
             </div>
           )}
 
-          {/* Gravure configurator details */}
+          {/* Eigen ontwerp details */}
           {order.order_type === 'configurator' && (
             <div className="bg-amber-50 rounded-2xl border border-amber-200 p-5 space-y-4">
               <h3 className="font-bold text-amber-800 flex items-center gap-2">
                 <Pen className="h-4 w-4" />
-                Gravure-informatie
+                Eigen ontwerp
               </h3>
 
               {order.upload_url && (
@@ -198,7 +198,7 @@ export default async function AdminOrderDetailPage({ params }: Props) {
 
               {order.engraving_position && (
                 <div>
-                  <p className="text-xs font-bold text-amber-600 uppercase tracking-wide mb-2">Graveerlocatie</p>
+                  <p className="text-xs font-bold text-amber-600 uppercase tracking-wide mb-2">Plaatsing op product</p>
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     {(['x', 'y', 'width', 'height'] as const).map((field) => {
                       const pos = order.engraving_position as EngravingPosition

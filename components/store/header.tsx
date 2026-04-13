@@ -13,7 +13,7 @@ import { CartSidebar } from '@/components/store/cart-sidebar'
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/collecties', label: 'Collecties' },
-  { href: '/configurator', label: 'Gravure' },
+  { href: '/configurator', label: 'Eigen ontwerp' },
   { href: '/contact', label: 'Contact' },
 ]
 

@@ -33,7 +33,7 @@ export function ConfiguratorConfirmationEmail({
   return (
     <Html lang="nl">
       <Head />
-      <Preview>Bedankt voor je gravure-bestelling bij Julies Art!</Preview>
+      <Preview>Bedankt voor je bestelling bij Julies Art!</Preview>
       <Body style={{ backgroundColor: '#f9f5f0', fontFamily: 'Georgia, serif', margin: 0, padding: 0 }}>
         <Container style={{ maxWidth: 600, margin: '0 auto', backgroundColor: '#ffffff', borderRadius: 12, overflow: 'hidden' }}>
 
@@ -53,8 +53,8 @@ export function ConfiguratorConfirmationEmail({
               Bedankt voor je bestelling, {order.customer_name ?? 'lieve klant'}!
             </Heading>
             <Text style={{ color: '#555', fontSize: 15, lineHeight: 1.6, margin: 0 }}>
-              We hebben je gravure-bestelling goed ontvangen. Zodra je betaling is verwerkt, gaan we
-              direct aan de slag met jouw unieke gravure.
+              We hebben je bestelling goed ontvangen. Zodra je betaling is verwerkt, gaan we
+              direct aan de slag met jouw eigen ontwerp.
             </Text>
           </Section>
 
@@ -103,12 +103,13 @@ export function ConfiguratorConfirmationEmail({
             {engravingPosition && (
               <Row style={{ marginBottom: 12 }}>
                 <Column style={{ width: '40%' }}>
-                  <Text style={{ color: '#888', fontSize: 13, margin: 0 }}>Graveerlocatie</Text>
+                  <Text style={{ color: '#888', fontSize: 13, margin: 0 }}>Plaatsing op product</Text>
                 </Column>
                 <Column>
                   <Text style={{ color: '#2d2d2d', fontSize: 13, margin: 0 }}>
                     X: {Math.round(engravingPosition.x)}% &middot; Y: {Math.round(engravingPosition.y)}%
                     &mdash; {Math.round(engravingPosition.width)}% &times; {Math.round(engravingPosition.height)}%
+                    {(engravingPosition.rotation ?? 0) > 0 ? ` — ${Math.round(engravingPosition.rotation)}°` : ''}
                   </Text>
                 </Column>
               </Row>
@@ -149,7 +150,7 @@ export function ConfiguratorConfirmationEmail({
               1. We controleren je ontwerp en verwerken je betaling.
             </Text>
             <Text style={{ color: '#555', fontSize: 14, lineHeight: 1.7, margin: '0 0 8px' }}>
-              2. We graveren jouw ontwerp op het gekozen product.
+              2. We zetten jouw eigen ontwerp op het gekozen product.
             </Text>
             <Text style={{ color: '#555', fontSize: 14, lineHeight: 1.7, margin: 0 }}>
               3. We sturen je product naar je toe — je ontvangt een track & trace zodra het verstuurd is.

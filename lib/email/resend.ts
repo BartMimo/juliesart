@@ -47,7 +47,7 @@ export async function sendConfiguratorConfirmationEmail(payload: ConfiguratorEma
   const { error } = await resend.emails.send({
     from: fromEmail,
     to: [payload.order.email],
-    subject: `Bevestiging gravure-bestelling ${payload.order.order_number} — Julies Art`,
+    subject: `Bevestiging bestelling ${payload.order.order_number} — Julies Art`,
     react: ConfiguratorConfirmationEmail(payload),
   })
 
