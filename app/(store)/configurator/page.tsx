@@ -7,9 +7,8 @@ import { Upload, Package, MapPin, ShoppingBag, ChevronRight, ChevronLeft, Check,
 import { createClient } from '@/lib/supabase/client'
 import { Product, EngravingPosition } from '@/types'
 import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Textarea } from '@/components/ui/textarea'
 import { formatPrice } from '@/lib/utils'
+import { useCartStore } from '@/lib/cart/store'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -466,7 +465,7 @@ function StepLocation({
   )
 }
 
-// ── Step 4 – Bestelling plaatsen ──────────────────────────────────────────────
+// ── Step 4 – Toevoegen aan winkelwagen ───────────────────────────────────────
 
 function StepOrder({
   product,
@@ -477,47 +476,43 @@ function StepOrder({
   uploadUrl: string
   position: EngravingPosition
 }) {
-  const [name, setName] = useState('')
-  const [email, setEmail] = useState('')
-  const [note, setNote] = useState('')
-  const [submitting, setSubmitting] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   const router = useRouter()
-
+  const addItem = useCartStore((s) => s.addItem)
   const primaryImage = (product.images ?? []).find((img: { is_primary: boolean }) => img.is_primary) ?? (product.images ?? [])[0]
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!name.trim() || !email.trim()) return
-    setError(null)
-    setSubmitting(true)
-
-    try {
-      const res = await fetch('/api/configurator/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          productId: product.id,
-          uploadUrl,
-          engravingPosition: position,
-          customerName: name.trim(),
-          customerEmail: email.trim(),
-          note: note.trim() || undefined,
-        }),
-      })
-      const json = await res.json()
-      if (!res.ok) throw new Error(json.error ?? 'Er is iets misgegaan')
-      router.push(json.url)
-    } catch (e: unknown) {
-      setError(e instanceof Error ? e.message : 'Er is iets misgegaan. Probeer opnieuw.')
-      setSubmitting(false)
-    }
+  const handleAddToCart = () => {
+    addItem({
+      productId: product.id,
+      productName: product.name,
+      productSlug: product.slug,
+      productImage: primaryImage?.url ?? null,
+      quantity: 1,
+      unitPrice: product.price,
+      basePrice: product.price,
+      personalizations: [
+        {
+          fieldKey: 'gravure_upload',
+          fieldLabel: 'Gravure ontwerp',
+          fieldType: 'text',
+          value: uploadUrl,
+          displayValue: 'Geüpload ontwerp',
+        },
+        {
+          fieldKey: 'gravure_positie',
+          fieldLabel: 'Graveerlocatie',
+          fieldType: 'text',
+          value: JSON.stringify(position),
+          displayValue: `X: ${Math.round(position.x)}%, Y: ${Math.round(position.y)}% — ${Math.round(position.width)}% × ${Math.round(position.height)}%`,
+        },
+      ],
+    })
+    router.push('/winkelwagen')
   }
 
   return (
-    <div className="max-w-xl mx-auto">
-      {/* Summary */}
-      <div className="bg-amber-50 rounded-2xl p-5 mb-6 border border-amber-100 space-y-4">
+    <div className="max-w-xl mx-auto space-y-6">
+      {/* Overzicht */}
+      <div className="bg-amber-50 rounded-2xl p-5 border border-amber-100 space-y-4">
         <h3 className="font-bold text-neutral-800">Overzicht</h3>
         <div className="flex gap-4 items-start">
           {primaryImage && (
@@ -540,48 +535,20 @@ function StepOrder({
             <Image src={uploadUrl} alt="Jouw tekening" width={400} height={112} className="object-contain w-full max-h-28" />
           </div>
         </div>
+
+        <div className="border-t border-amber-100 pt-3 text-sm text-neutral-600 space-y-1">
+          <p><span className="font-semibold">Graveerlocatie:</span> X: {Math.round(position.x)}%, Y: {Math.round(position.y)}%</p>
+          <p><span className="font-semibold">Afmeting:</span> {Math.round(position.width)}% × {Math.round(position.height)}%</p>
+        </div>
       </div>
 
-      {/* Form */}
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <h3 className="font-bold text-neutral-800">Jouw gegevens</h3>
-        <Input
-          label="Naam"
-          required
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Jouw naam"
-        />
-        <Input
-          label="E-mailadres"
-          type="email"
-          required
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          placeholder="jouw@email.nl"
-        />
-        <Textarea
-          label="Opmerking (optioneel)"
-          value={note}
-          onChange={(e) => setNote(e.target.value)}
-          placeholder="Speciale wensen of opmerkingen…"
-          rows={3}
-        />
-
-        {error && (
-          <div className="flex items-center gap-2 text-red-600 bg-red-50 rounded-xl px-4 py-3 text-sm">
-            <X className="h-4 w-4 shrink-0" /> {error}
-          </div>
-        )}
-
-        <Button type="submit" size="lg" className="w-full" loading={submitting}>
-          <ShoppingBag className="h-4 w-4" />
-          Bestellen en betalen — {formatPrice(product.price)}
-        </Button>
-        <p className="text-xs text-neutral-400 text-center">
-          Je wordt doorgestuurd naar Stripe voor een veilige betaling.
-        </p>
-      </form>
+      <Button size="lg" className="w-full" onClick={handleAddToCart}>
+        <ShoppingBag className="h-4 w-4" />
+        Toevoegen aan winkelwagen
+      </Button>
+      <p className="text-xs text-neutral-400 text-center">
+        Je kunt daarna nog andere producten toevoegen en afrekenen via de winkelwagen.
+      </p>
     </div>
   )
 }
