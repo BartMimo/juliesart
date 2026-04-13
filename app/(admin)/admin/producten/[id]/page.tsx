@@ -53,6 +53,7 @@ export default function ProductEditPage() {
   const [personalizationFields, setPersonalizationFields] = useState<PersonalizationField[]>([])
   const [categories, setCategories] = useState<Category[]>([])
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<string[]>([])
+  const [engravingArea, setEngravingArea] = useState<{ x: number; y: number; width: number; height: number } | null>(null)
   const supabase = createClient()
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<FormData>({
@@ -142,6 +143,7 @@ export default function ProductEditPage() {
         setValue('stock_quantity', p.stock_quantity ?? null)
         setValue('meta_title', p.meta_title ?? '')
         setValue('meta_description', p.meta_description ?? '')
+        setEngravingArea(p.engraving_area ?? null)
       }
       setLoading(false)
     }
@@ -159,6 +161,7 @@ export default function ProductEditPage() {
       stock_quantity: data.track_inventory ? (data.stock_quantity ?? null) : null,
       // Primary category = first selected (for backwards compat with breadcrumbs/display)
       category_id: selectedCategoryIds[0] ?? null,
+      engraving_area: engravingArea,
     }
 
     const savedProductId = productId
@@ -388,6 +391,56 @@ export default function ProductEditPage() {
                 helpText="Loopt automatisch af bij bestellingen. Bestellen blijft mogelijk bij 0 of lager."
                 {...register('stock_quantity')}
               />
+            )}
+          </div>
+
+          {/* Engraving area */}
+          <div className="bg-white rounded-2xl border border-neutral-100 shadow-card p-6 space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="font-bold text-neutral-800">Graveerzone</h2>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  className="w-4 h-4 accent-brand-500"
+                  checked={!!engravingArea}
+                  onChange={e => setEngravingArea(e.target.checked ? { x: 10, y: 10, width: 80, height: 80 } : null)}
+                />
+                <span className="text-xs font-semibold text-neutral-600">Gravure inschakelen</span>
+              </label>
+            </div>
+            {engravingArea ? (
+              <div className="space-y-3">
+                <p className="text-xs text-neutral-400">
+                  Definieer het toegestane graveergebied als percentage van de afbeelding.
+                </p>
+                <div className="grid grid-cols-2 gap-3">
+                  {(['x', 'y', 'width', 'height'] as const).map((field) => (
+                    <div key={field}>
+                      <label className="block text-xs font-semibold text-neutral-600 mb-1">
+                        {field === 'x' ? 'Links (%)' : field === 'y' ? 'Boven (%)' : field === 'width' ? 'Breedte (%)' : 'Hoogte (%)'}
+                      </label>
+                      <input
+                        type="number"
+                        min={0}
+                        max={100}
+                        step={1}
+                        value={engravingArea[field]}
+                        onChange={e => setEngravingArea(prev => prev ? { ...prev, [field]: Number(e.target.value) } : null)}
+                        className="w-full px-3 py-2 rounded-xl border border-neutral-200 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400"
+                      />
+                    </div>
+                  ))}
+                </div>
+                <div className="bg-neutral-50 rounded-xl p-3">
+                  <p className="text-xs text-neutral-500 font-mono">
+                    {`{ x: ${engravingArea.x}, y: ${engravingArea.y}, width: ${engravingArea.width}, height: ${engravingArea.height} }`}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <p className="text-xs text-neutral-400">
+                Schakel gravure in om dit product beschikbaar te maken in de gravure-configurator.
+              </p>
             )}
           </div>
 

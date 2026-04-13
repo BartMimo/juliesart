@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { stripe } from '@/lib/stripe'
 import { createAdminClient } from '@/lib/supabase/admin'
-import { sendOrderConfirmationEmail } from '@/lib/email/resend'
+import { sendOrderConfirmationEmail, sendConfiguratorConfirmationEmail } from '@/lib/email/resend'
 import Stripe from 'stripe'
 
 // Stripe sends raw body — must not parse as JSON
@@ -59,6 +59,11 @@ export async function POST(request: NextRequest) {
   const session = await stripe.checkout.sessions.retrieve(sessionSnapshot.id)
 
   try {
+    // Configurator orders hebben een apart afhandelingspad
+    if (session.metadata?.order_type === 'configurator') {
+      return handleConfiguratorOrder(session, supabase)
+    }
+
     // Parse cart items from metadata
     const cartItems = JSON.parse(session.metadata?.cart_items ?? '[]')
     const discountCodeId = session.metadata?.discount_code_id || null
@@ -206,5 +211,81 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Webhook processing error:', error)
     return NextResponse.json({ error: 'Processing failed' }, { status: 500 })
+  }
+}
+
+// ── Gravure-configurator order afhandelen ──────────────────────────────────────
+
+async function handleConfiguratorOrder(
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  session: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  supabase: any
+): Promise<NextResponse> {
+  try {
+    const meta = session.metadata!
+    const totalCents = session.amount_total ?? 0
+    const total = totalCents / 100
+    const engravingPosition = meta.engraving_position ? JSON.parse(meta.engraving_position) : null
+
+    const { data: order, error: orderError } = await supabase
+      .from('orders')
+      .insert({
+        email: meta.customer_email,
+        customer_name: meta.customer_name,
+        status: 'paid',
+        subtotal: total,
+        discount_amount: 0,
+        shipping_amount: 0,
+        tax_amount: 0,
+        total,
+        stripe_payment_intent_id: typeof session.payment_intent === 'string'
+          ? session.payment_intent
+          : session.payment_intent?.id ?? null,
+        stripe_session_id: session.id,
+        customer_notes: meta.note || null,
+        upload_url: meta.upload_url,
+        engraving_position: engravingPosition,
+        order_type: 'configurator',
+        paid_at: new Date().toISOString(),
+      })
+      .select()
+      .single()
+
+    if (orderError || !order) {
+      console.error('Configurator order aanmaken mislukt:', orderError)
+      return NextResponse.json({ error: 'Order aanmaken mislukt' }, { status: 500 })
+    }
+
+    // Maak een order item aan voor het product
+    await supabase.from('order_items').insert({
+      order_id: order.id,
+      product_id: meta.product_id,
+      product_name: meta.product_name,
+      product_slug: '',
+      product_image: null,
+      quantity: 1,
+      unit_price: total,
+      total_price: total,
+    })
+
+    // Stuur bevestigingsmail
+    try {
+      await sendConfiguratorConfirmationEmail({
+        order,
+        productName: meta.product_name,
+        uploadUrl: meta.upload_url,
+        engravingPosition,
+        note: meta.note,
+      })
+    } catch (emailError) {
+      console.error('Configurator bevestigingsmail mislukt:', emailError)
+    }
+
+    console.log(`Configurator order ${order.order_number} aangemaakt voor sessie ${session.id}`)
+    return NextResponse.json({ received: true, orderId: order.id })
+  } catch (error) {
+    console.error('Configurator webhook error:', error)
+    return NextResponse.json({ error: 'Verwerking mislukt' }, { status: 500 })
   }
 }

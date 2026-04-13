@@ -16,6 +16,7 @@ import {
   LogOut,
   ClipboardList,
   Star,
+  Pen,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/client'
@@ -31,6 +32,7 @@ const navItems = [
   { href: '/admin/beoordelingen', label: 'Beoordelingen', icon: Star },
   { href: '/admin/kortingscodes', label: 'Kortingscodes', icon: Tag },
   { href: '/admin/analytics', label: 'Analytics', icon: BarChart2 },
+  { href: '/configurator', label: 'Configurator', icon: Pen, exact: true },
 ]
 
 export function AdminSidebar() {

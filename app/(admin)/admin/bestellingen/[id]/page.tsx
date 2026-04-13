@@ -5,7 +5,8 @@ import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
 import { OrderStatusSelect } from '@/components/admin/order-status-select'
 import { formatDate, formatPrice, getOrderStatusLabel } from '@/lib/utils'
-import { ArrowLeft, Package } from 'lucide-react'
+import { ArrowLeft, Package, Pen } from 'lucide-react'
+import { EngravingPosition } from '@/types'
 
 export const metadata: Metadata = { title: 'Bestellingdetails' }
 
@@ -168,6 +169,51 @@ export default async function AdminOrderDetailPage({ params }: Props) {
             <div className="bg-white rounded-2xl border border-neutral-100 shadow-card p-5">
               <h3 className="font-bold text-neutral-800 mb-2">Opmerking klant</h3>
               <p className="text-sm text-neutral-600 leading-relaxed">{order.customer_notes}</p>
+            </div>
+          )}
+
+          {/* Gravure configurator details */}
+          {order.order_type === 'configurator' && (
+            <div className="bg-amber-50 rounded-2xl border border-amber-200 p-5 space-y-4">
+              <h3 className="font-bold text-amber-800 flex items-center gap-2">
+                <Pen className="h-4 w-4" />
+                Gravure-informatie
+              </h3>
+
+              {order.upload_url && (
+                <div>
+                  <p className="text-xs font-bold text-amber-600 uppercase tracking-wide mb-2">Geüpload ontwerp</p>
+                  <a href={order.upload_url} target="_blank" rel="noopener noreferrer">
+                    <Image
+                      src={order.upload_url}
+                      alt="Klant ontwerp"
+                      width={300}
+                      height={200}
+                      className="rounded-xl border border-amber-200 object-contain bg-white max-h-40 w-full"
+                    />
+                    <p className="text-xs text-amber-600 mt-1 hover:underline">Origineel openen ↗</p>
+                  </a>
+                </div>
+              )}
+
+              {order.engraving_position && (
+                <div>
+                  <p className="text-xs font-bold text-amber-600 uppercase tracking-wide mb-2">Graveerlocatie</p>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    {(['x', 'y', 'width', 'height'] as const).map((field) => {
+                      const pos = order.engraving_position as EngravingPosition
+                      return (
+                        <div key={field} className="bg-white rounded-xl px-3 py-2 border border-amber-100">
+                          <p className="text-xs text-amber-500 font-semibold">
+                            {field === 'x' ? 'Links' : field === 'y' ? 'Boven' : field === 'width' ? 'Breedte' : 'Hoogte'}
+                          </p>
+                          <p className="text-neutral-800 font-bold">{Math.round(pos[field])}%</p>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
           )}
         </div>

@@ -33,6 +33,14 @@ export interface Category {
   updated_at: string
 }
 
+// Gravure configurator types
+export interface EngravingPosition {
+  x: number       // % van afbeeldingsbreedte
+  y: number       // % van afbeeldingshoogte
+  width: number   // % van afbeeldingsbreedte
+  height: number  // % van afbeeldingshoogte
+}
+
 export interface Product {
   id: string
   name: string
@@ -51,6 +59,7 @@ export interface Product {
   is_sale: boolean
   stock_quantity: number | null
   track_inventory: boolean
+  engraving_area: EngravingPosition | null
   meta_title: string | null
   meta_description: string | null
   created_at: string
@@ -154,6 +163,10 @@ export interface Order {
   delivered_at: string | null
   created_at: string
   updated_at: string
+  // Gravure configurator velden
+  upload_url: string | null
+  engraving_position: EngravingPosition | null
+  order_type: string | null
   // Joined
   items?: OrderItem[]
 }
