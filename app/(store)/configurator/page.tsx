@@ -258,8 +258,6 @@ function StepProduct({
 
 // ── Step 3 – Graveerlocatie ───────────────────────────────────────────────────
 
-const HANDLE_SIZE = 10 // px
-
 function StepLocation({
   product,
   uploadUrl,
@@ -272,113 +270,121 @@ function StepLocation({
   onPosition: (pos: EngravingPosition) => void
 }) {
   const containerRef = useRef<HTMLDivElement>(null)
-  const [drag, setDrag] = useState<DragState>({
-    active: false, startX: 0, startY: 0, mode: null, initPos: null,
-  })
+  const dragRef = useRef<DragState>({ active: false, startX: 0, startY: 0, mode: null, initPos: null })
+  // Trigger re-render when drag becomes active/inactive for cursor updates
+  const [isDragging, setIsDragging] = useState(false)
 
   const area = product.engraving_area!
   const primaryImage = (product.images ?? []).find((img: { is_primary: boolean }) => img.is_primary) ?? (product.images ?? [])[0]
 
-  // Clamp value to allowed engraving_area bounds
   const clamp = useCallback((pos: EngravingPosition): EngravingPosition => {
-    const minW = 5
-    const minH = 5
+    const minW = 5, minH = 5
     let { x, y, width, height } = pos
-
-    width = Math.max(minW, Math.min(width, area.width))
+    width  = Math.max(minW, Math.min(width,  area.width))
     height = Math.max(minH, Math.min(height, area.height))
-    x = Math.max(area.x, Math.min(x, area.x + area.width - width))
+    x = Math.max(area.x, Math.min(x, area.x + area.width  - width))
     y = Math.max(area.y, Math.min(y, area.y + area.height - height))
-
     return { x, y, width, height }
   }, [area])
 
-  // Convert mouse event coords to % relative to container
-  const toPercent = useCallback((e: MouseEvent | React.MouseEvent): { px: number; py: number } => {
+  // Works for both MouseEvent and PointerEvent (both have clientX/clientY)
+  const toPercent = useCallback((clientX: number, clientY: number) => {
     const rect = containerRef.current!.getBoundingClientRect()
-    const px = ((e.clientX - rect.left) / rect.width) * 100
-    const py = ((e.clientY - rect.top) / rect.height) * 100
-    return { px, py }
+    return {
+      px: ((clientX - rect.left) / rect.width)  * 100,
+      py: ((clientY - rect.top)  / rect.height) * 100,
+    }
   }, [])
 
-  const onMouseDown = useCallback((e: React.MouseEvent, mode: DragState['mode']) => {
+  const applyMove = useCallback((clientX: number, clientY: number) => {
+    const drag = dragRef.current
+    if (!drag.active || !drag.mode) return
+    const { px, py } = toPercent(clientX, clientY)
+    const dx = px - drag.startX
+    const dy = py - drag.startY
+    const init = drag.initPos!
+    let next: EngravingPosition
+
+    if (drag.mode === 'draw') {
+      next = clamp({
+        x: Math.min(px, drag.startX),
+        y: Math.min(py, drag.startY),
+        width:  Math.abs(px - drag.startX),
+        height: Math.abs(py - drag.startY),
+      })
+    } else if (drag.mode === 'move') {
+      next = clamp({ ...init, x: init.x + dx, y: init.y + dy })
+    } else if (drag.mode === 'resize-se') {
+      next = clamp({ ...init, width: Math.max(5, init.width + dx), height: Math.max(5, init.height + dy) })
+    } else if (drag.mode === 'resize-sw') {
+      const w = Math.max(5, init.width - dx)
+      next = clamp({ x: init.x + init.width - w, y: init.y, width: w, height: Math.max(5, init.height + dy) })
+    } else if (drag.mode === 'resize-ne') {
+      const h = Math.max(5, init.height - dy)
+      next = clamp({ x: init.x, y: init.y + init.height - h, width: Math.max(5, init.width + dx), height: h })
+    } else {
+      // resize-nw
+      const w = Math.max(5, init.width - dx)
+      const h = Math.max(5, init.height - dy)
+      next = clamp({ x: init.x + init.width - w, y: init.y + init.height - h, width: w, height: h })
+    }
+    onPosition(next)
+  }, [clamp, toPercent, onPosition])
+
+  // ── Pointer events (mouse + touch) ──────────────────────────────────────────
+
+  const startDrag = useCallback((
+    e: React.PointerEvent,
+    mode: DragState['mode'],
+    currentPosition: EngravingPosition | null,
+  ) => {
     e.preventDefault()
-    const { px, py } = toPercent(e)
-    setDrag({ active: true, startX: px, startY: py, mode, initPos: position })
-  }, [position, toPercent])
+    e.stopPropagation()
+    ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
+    const { px, py } = toPercent(e.clientX, e.clientY)
+    dragRef.current = { active: true, startX: px, startY: py, mode, initPos: currentPosition }
+    setIsDragging(true)
+  }, [toPercent])
 
-  useEffect(() => {
-    if (!drag.active) return
+  const onPointerMove = useCallback((e: React.PointerEvent) => {
+    if (!dragRef.current.active) return
+    e.preventDefault()
+    applyMove(e.clientX, e.clientY)
+  }, [applyMove])
 
-    const onMove = (e: MouseEvent) => {
-      const { px, py } = toPercent(e)
-      const dx = px - drag.startX
-      const dy = py - drag.startY
-      const init = drag.initPos!
+  const onPointerUp = useCallback(() => {
+    dragRef.current.active = false
+    setIsDragging(false)
+  }, [])
 
-      let next: EngravingPosition
-
-      if (drag.mode === 'draw') {
-        // When drawing fresh, snap start corner
-        const x = Math.min(px, drag.startX)
-        const y = Math.min(py, drag.startY)
-        const w = Math.abs(px - drag.startX)
-        const h = Math.abs(py - drag.startY)
-        next = clamp({ x, y, width: w, height: h })
-      } else if (drag.mode === 'move') {
-        next = clamp({ ...init, x: init.x + dx, y: init.y + dy })
-      } else if (drag.mode === 'resize-se') {
-        next = clamp({ ...init, width: Math.max(5, init.width + dx), height: Math.max(5, init.height + dy) })
-      } else if (drag.mode === 'resize-sw') {
-        const newW = Math.max(5, init.width - dx)
-        next = clamp({ x: init.x + init.width - newW, y: init.y, width: newW, height: Math.max(5, init.height + dy) })
-      } else if (drag.mode === 'resize-ne') {
-        const newH = Math.max(5, init.height - dy)
-        next = clamp({ x: init.x, y: init.y + init.height - newH, width: Math.max(5, init.width + dx), height: newH })
-      } else if (drag.mode === 'resize-nw') {
-        const newW = Math.max(5, init.width - dx)
-        const newH = Math.max(5, init.height - dy)
-        next = clamp({ x: init.x + init.width - newW, y: init.y + init.height - newH, width: newW, height: newH })
-      } else {
-        return
-      }
-
-      onPosition(next)
-    }
-
-    const onUp = () => setDrag(d => ({ ...d, active: false }))
-    window.addEventListener('mousemove', onMove)
-    window.addEventListener('mouseup', onUp)
-    return () => {
-      window.removeEventListener('mousemove', onMove)
-      window.removeEventListener('mouseup', onUp)
-    }
-  }, [drag, clamp, toPercent, onPosition])
-
-  // Draw fresh selection on bare area click
-  const onAreaMouseDown = useCallback((e: React.MouseEvent) => {
-    // Only if not clicking an existing handle
+  // Container pointer-down → draw fresh box
+  const onContainerPointerDown = useCallback((e: React.PointerEvent) => {
     if ((e.target as HTMLElement).dataset.handle) return
-    onMouseDown(e, 'draw')
-    // Start with a zero-size box at click point
-    const { px, py } = toPercent(e)
-    const clamped = clamp({ x: px, y: py, width: 1, height: 1 })
-    onPosition(clamped)
-  }, [onMouseDown, toPercent, clamp, onPosition])
+    const { px, py } = toPercent(e.clientX, e.clientY)
+    // Start with a small box at tap point so it's immediately visible
+    onPosition(clamp({ x: px - 5, y: py - 5, width: 10, height: 10 }))
+    startDrag(e, 'draw', { x: px, y: py, width: 0, height: 0 })
+  }, [toPercent, clamp, onPosition, startDrag])
 
   return (
     <div className="max-w-2xl mx-auto space-y-4">
       <p className="text-sm text-neutral-500 text-center">
-        Sleep binnen het <span className="font-semibold text-amber-700">gele graveergebied</span> om de locatie en grootte van je gravure te bepalen.
+        Tik of sleep binnen het{' '}
+        <span className="font-semibold text-amber-700">gele graveergebied</span>{' '}
+        om de locatie te bepalen. Versleep de hoeken om het formaat aan te passen.
       </p>
 
-      {/* Product image with interactive overlay */}
+      {/* Interactive container */}
       <div
         ref={containerRef}
         className="relative rounded-2xl overflow-hidden border border-neutral-100 shadow-sm select-none bg-neutral-50"
-        style={{ cursor: drag.active && drag.mode === 'move' ? 'grabbing' : 'crosshair' }}
-        onMouseDown={onAreaMouseDown}
+        style={{ touchAction: 'none', cursor: isDragging ? 'grabbing' : 'crosshair' }}
+        onPointerDown={onContainerPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
       >
+        {/* Product image */}
         {primaryImage ? (
           <div className="relative w-full" style={{ paddingBottom: '100%' }}>
             <Image
@@ -396,34 +402,24 @@ function StepLocation({
           </div>
         )}
 
-        {/* Allowed engraving area overlay */}
+        {/* Allowed engraving area */}
         <div
           className="absolute border-2 border-dashed border-amber-400 bg-amber-400/10 pointer-events-none"
-          style={{
-            left: `${area.x}%`,
-            top: `${area.y}%`,
-            width: `${area.width}%`,
-            height: `${area.height}%`,
-          }}
+          style={{ left: `${area.x}%`, top: `${area.y}%`, width: `${area.width}%`, height: `${area.height}%` }}
         />
 
         {/* Selected engraving box */}
         {position && (
           <div
             className="absolute"
-            style={{
-              left: `${position.x}%`,
-              top: `${position.y}%`,
-              width: `${position.width}%`,
-              height: `${position.height}%`,
-            }}
+            style={{ left: `${position.x}%`, top: `${position.y}%`, width: `${position.width}%`, height: `${position.height}%` }}
           >
-            {/* Preview of uploaded drawing */}
+            {/* Drawing preview — draggable to move */}
             <div
-              className="absolute inset-0 overflow-hidden opacity-70 border-2 border-amber-500 rounded"
-              data-handle="outer"
-              onMouseDown={(e) => { e.stopPropagation(); onMouseDown(e, 'move') }}
-              style={{ cursor: drag.active && drag.mode === 'move' ? 'grabbing' : 'grab' }}
+              className="absolute inset-0 overflow-hidden border-2 border-amber-500 rounded opacity-75"
+              data-handle="move"
+              style={{ touchAction: 'none', cursor: isDragging ? 'grabbing' : 'grab' }}
+              onPointerDown={(e) => startDrag(e, 'move', position)}
             >
               <Image
                 src={uploadUrl}
@@ -435,21 +431,25 @@ function StepLocation({
               />
             </div>
 
-            {/* Resize handles */}
+            {/* Resize handles — large touch targets */}
             {(['nw', 'ne', 'sw', 'se'] as const).map((corner) => (
               <div
                 key={corner}
                 data-handle={corner}
-                onMouseDown={(e) => { e.stopPropagation(); onMouseDown(e, `resize-${corner}` as DragState['mode']) }}
-                className="absolute w-3 h-3 bg-white border-2 border-amber-500 rounded-sm shadow-sm"
+                // 44×44px touch target, visible dot in center
+                className="absolute flex items-center justify-center"
                 style={{
+                  width: 44, height: 44, touchAction: 'none',
                   cursor: `${corner}-resize`,
-                  ...(corner === 'nw' ? { top: -HANDLE_SIZE / 2, left: -HANDLE_SIZE / 2 } :
-                     corner === 'ne' ? { top: -HANDLE_SIZE / 2, right: -HANDLE_SIZE / 2 } :
-                     corner === 'sw' ? { bottom: -HANDLE_SIZE / 2, left: -HANDLE_SIZE / 2 } :
-                                       { bottom: -HANDLE_SIZE / 2, right: -HANDLE_SIZE / 2 }),
+                  ...(corner === 'nw' ? { top: -22, left: -22 } :
+                     corner === 'ne' ? { top: -22, right: -22 } :
+                     corner === 'sw' ? { bottom: -22, left: -22 } :
+                                       { bottom: -22, right: -22 }),
                 }}
-              />
+                onPointerDown={(e) => startDrag(e, `resize-${corner}` as DragState['mode'], position)}
+              >
+                <div className="w-4 h-4 bg-white border-2 border-amber-500 rounded-sm shadow-md" />
+              </div>
             ))}
           </div>
         )}
@@ -457,8 +457,8 @@ function StepLocation({
 
       {position && (
         <div className="text-xs text-neutral-400 text-center">
-          Positie: {Math.round(position.x)}% &times; {Math.round(position.y)}%
-          &ensp;|&ensp;Grootte: {Math.round(position.width)}% &times; {Math.round(position.height)}%
+          Positie: {Math.round(position.x)}% × {Math.round(position.y)}%
+          &ensp;|&ensp;Grootte: {Math.round(position.width)}% × {Math.round(position.height)}%
         </div>
       )}
     </div>
