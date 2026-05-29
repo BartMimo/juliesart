@@ -28,8 +28,6 @@ export function cartItemsToLineItems(items: CartItem[]): Stripe.Checkout.Session
           metadata: {
             product_id: item.productId,
             product_slug: item.productSlug,
-            // Store personalization as JSON string for webhook use
-            personalizations: JSON.stringify(item.personalizations),
           },
         },
         unit_amount: Math.round(item.unitPrice * 100), // Stripe uses cents

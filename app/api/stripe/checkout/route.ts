@@ -22,8 +22,6 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
-    const adminClient = createAdminClient()
-
     // Build line items
     const lineItems = cartItemsToLineItems(items)
     const subtotal = items.reduce((s, i) => s + i.unitPrice * i.quantity, 0)
@@ -33,6 +31,7 @@ export async function POST(request: NextRequest) {
     let discountCodeRecord = null
 
     if (discountCode) {
+      const adminClient = createAdminClient()
       const { data: discount } = await adminClient
         .from('discount_codes')
         .select('*')
@@ -41,7 +40,6 @@ export async function POST(request: NextRequest) {
         .single()
 
       if (discount) {
-        // Check validity
         const now = new Date()
         const isValidDate = new Date(discount.valid_from) <= now &&
           (!discount.valid_until || new Date(discount.valid_until) >= now)
@@ -81,25 +79,32 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // Sla cart-data op in Supabase — Stripe metadata heeft een limiet van 500 tekens per waarde
-    await adminClient.from('checkout_sessions').insert({
-      stripe_session_id: session.id,
-      cart_items: items.map((item) => ({
-        productId: item.productId,
-        productName: item.productName,
-        productSlug: item.productSlug,
-        productImage: item.productImage,
-        quantity: item.quantity,
-        unitPrice: item.unitPrice,
-        personalizations: item.personalizations,
-      })),
-    })
+    // Sla cart-data op in Supabase (niet-blokkerend — mag niet de checkout onderbreken)
+    try {
+      const adminClient = createAdminClient()
+      await adminClient.from('checkout_sessions').insert({
+        stripe_session_id: session.id,
+        cart_items: items.map((item) => ({
+          productId: item.productId,
+          productName: item.productName,
+          productSlug: item.productSlug,
+          productImage: item.productImage,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice,
+          personalizations: item.personalizations,
+        })),
+      })
+    } catch (insertError) {
+      // Loggen maar niet blokkeren — webhook valt terug op lege cart
+      console.error('checkout_sessions insert failed:', insertError)
+    }
 
     return NextResponse.json({ url: session.url, sessionId: session.id })
   } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
     console.error('Stripe checkout error:', error)
     return NextResponse.json(
-      { error: 'Er is een fout opgetreden bij het starten van de betaling.' },
+      { error: `Betalingsfout: ${message}` },
       { status: 500 }
     )
   }
