@@ -64,8 +64,13 @@ export async function POST(request: NextRequest) {
       return handleConfiguratorOrder(session, supabase)
     }
 
-    // Parse cart items from metadata
-    const cartItems = JSON.parse(session.metadata?.cart_items ?? '[]')
+    // Haal cart-data op uit Supabase (niet uit metadata vanwege de 500-tekenlimiet)
+    const { data: checkoutSession } = await supabase
+      .from('checkout_sessions')
+      .select('cart_items')
+      .eq('stripe_session_id', session.id)
+      .single()
+    const cartItems = checkoutSession?.cart_items ?? []
     const discountCodeId = session.metadata?.discount_code_id || null
     const discountCode = session.metadata?.discount_code || null
     const userId = session.metadata?.user_id || null

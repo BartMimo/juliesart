@@ -22,6 +22,8 @@ export async function POST(request: NextRequest) {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
 
+    const adminClient = createAdminClient()
+
     // Build line items
     const lineItems = cartItemsToLineItems(items)
     const subtotal = items.reduce((s, i) => s + i.unitPrice * i.quantity, 0)
@@ -31,7 +33,6 @@ export async function POST(request: NextRequest) {
     let discountCodeRecord = null
 
     if (discountCode) {
-      const adminClient = createAdminClient()
       const { data: discount } = await adminClient
         .from('discount_codes')
         .select('*')
@@ -61,7 +62,7 @@ export async function POST(request: NextRequest) {
     // Create Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
-      payment_method_types: ['card', 'ideal', 'bancontact'],
+      automatic_payment_methods: { enabled: true },
       line_items: lineItems,
       discounts: discounts.length > 0 ? discounts : undefined,
       shipping_address_collection: {
@@ -77,22 +78,21 @@ export async function POST(request: NextRequest) {
         user_id: user?.id ?? '',
         discount_code_id: discountCodeRecord?.id ?? '',
         discount_code: discountCode ?? '',
-        // Serialize cart for webhook
-        cart_items: JSON.stringify(items.map((item) => ({
-          productId: item.productId,
-          productName: item.productName,
-          productSlug: item.productSlug,
-          quantity: item.quantity,
-          unitPrice: item.unitPrice,
-          personalizations: item.personalizations?.map((p) => ({
-            fieldKey: p.fieldKey,
-            fieldLabel: p.fieldLabel,
-            fieldType: p.fieldType,
-            value: p.value,
-            displayValue: p.displayValue,
-          })),
-        }))),
       },
+    })
+
+    // Sla cart-data op in Supabase — Stripe metadata heeft een limiet van 500 tekens per waarde
+    await adminClient.from('checkout_sessions').insert({
+      stripe_session_id: session.id,
+      cart_items: items.map((item) => ({
+        productId: item.productId,
+        productName: item.productName,
+        productSlug: item.productSlug,
+        productImage: item.productImage,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        personalizations: item.personalizations,
+      })),
     })
 
     return NextResponse.json({ url: session.url, sessionId: session.id })
